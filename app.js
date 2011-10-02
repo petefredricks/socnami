@@ -48,6 +48,8 @@ io.sockets.on('connection', function (socket) {
 	
 	getLatency(socket, 10);
 	
+	socket.emit('game-list', games);
+	
 	socket.on('ball-start', function () {
 		socket.broadcast.emit('ball-start');
 	});
@@ -62,19 +64,75 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('game-new', function (name) {
 		
-		var b64name = new Buffer(name).toString('base64');
+		var id = new Buffer(name).toString('base64');
 		
-		if (!games[b64name]) {
+		if (!games[id]) {
 			
-			games[b64name] = {b46name: b64name, name: name, players: 1};
+			games[id] = {
+				id: id, 
+				name: name, 
+				players: 1,
+				home: true,
+				away: false
+			};
 			
-			socket.set('game', b64name, function() {
-				socket.emit('game-created', games[b64name]);
+			socket.get('game', function(err, oldGame) {
+				
+				var oldId = oldGame && oldGame.id;
+				
+				if (typeof games[oldId] == 'object') {
+					
+					--games[oldId].players;
+					games[oldId][oldGame.side] = false;
+
+					io.sockets.emit('game-update', games[oldId]);
+				}
+				
+				socket.set('game', {id:id, side:'home'}, function() {
+					socket.emit('game-joined', games[id]);
+					io.sockets.emit('game-created', games[id]);
+				});
 			});
 		}
 		else {
 			socket.emit('game-name-taken');
 		}
+	});
+	
+	socket.on('game-join', function (id) {
+		
+		if (games[id] && games[id].players < 2) {
+			
+			var side;
+			
+			if (!games[id].home) {
+				side = 'home';
+			}
+			else {
+				side = 'away';
+			}
+			
+			++games[id].players;
+			
+			socket.set('game', {id:id, side:side}, function() {
+				socket.emit('game-joined', id);
+				io.sockets.emit('game-update', games[id]);
+			});
+		}
+	});
+	
+	socket.on('disconnect', function() {
+		socket.get('game', function(err, oldGame) {
+			
+			var oldId = oldGame && oldGame.id;
+			
+			if (typeof games[oldId] == 'object') {
+				--games[oldId].players;
+				games[oldId][oldGame.side] = false;
+				
+				socket.broadcast.emit('game-update', games[oldId]);
+			}
+		});
 	});
 });
 

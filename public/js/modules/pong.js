@@ -86,7 +86,7 @@ var pongGame = (function() {
 			}
 
 			home.paddle.el.css('top', newTop);
-			socket.emit('paddle-move', newTop);
+			//socket.emit('paddle-move', newTop);
 
 			netTop = lastTop - newTop;
 			lastTop = newTop;
@@ -265,16 +265,25 @@ var pongGame = (function() {
 	}
 	
 	function addGame(game) {
-		var html = ['<div class="game-item" data-id="', game.b64name, '">',
+		var html = ['<div class="game-item" data-id="', game.id, '">',
 			'<span class="game-item-name">', game.name, '</span><span class="game-item-players">(', game.players, ')</span>',
 		'</div>'];
 		
 		$('#pong-game-container').append(html.join(''));
 	}
 	
+	function updateGame(game) {
+		
+		$('#pong-game-container')
+			.find('div.game-item[data-id=' + game.id + ']')
+			.find('span.game-item-players')
+			.html('(' + game.players + ')');
+	}
+	
 	return {
 		init: init,
-		addGame: addGame
+		addGame: addGame,
+		updateGame: updateGame
 	}
 	
 })();
@@ -288,9 +297,21 @@ socket.on('connect', function () {
 	});
 	
 	socket.on('game-created', function(game) {
-		console.log(game)
 		pongGame.addGame(game);
-		pongGame.init();
+	});
+	
+	socket.on('game-joined', function(game) {
+		pongGame.init(game);
+	});
+	
+	socket.on('game-list', function(games) {
+		for (var game in games) {
+			pongGame.addGame(games[game]);
+		}
+	});
+	
+	socket.on('game-update', function(game) {
+		pongGame.updateGame(game);
 	});
 });
 
@@ -304,6 +325,16 @@ $(document).ready(function() {
 			socket.emit('game-new', val);
 			$('#pong-game-name').val('')
 		}
+
+		return false;
+	});
+	
+	
+	$('#pong-game-container').find('div.game-item').live('click', function() {
+
+		var gameEl = $(this);
+		
+		socket.emit('game-join', gameEl.data('id'));
 
 		return false;
 	});
