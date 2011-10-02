@@ -1,0 +1,108 @@
+body {
+	padding: 20px;
+}
+
+/**********************
+	PONG
+**********************/
+.pong-container {
+	background: #141414;
+	display: none;
+	float: left;
+	height: 400px;
+	position: relative;
+	width: 600px;
+	}
+
+.pong-paddle-container {
+	bottom: 0;
+	position: absolute;
+	top: 0;
+	width: 20px;
+	}
+	.pong-paddle {
+		left: 0;
+		height: 100px;
+		position: absolute;
+		right: 0;
+		}
+	.pong-home .pong-paddle {
+		background: #ccffcc;
+		}
+	.pong-away .pong-paddle {
+		background: #ffcccc;
+		}
+
+.pong-home {
+	right: 20px;
+	}
+
+.pong-away {
+	left: 20px;
+	}
+	
+.pong-ball {
+	background: #fff;
+	height: 15px;
+	left: 285px;
+	position: absolute;
+	top: 185px;
+	width: 15px;
+	}
+	
+.pong-score-away,
+.pong-score-home {
+	padding-bottom: 20px;
+	}
+	.pong-score {
+		color: #fff;
+		font-weight: bold;
+		}
+			
+#pong-game-container {
+	border: 1px solid #000;	
+	float: left;
+	height: 300px;
+	overflow: auto;
+	margin-left: 30px;
+	width: 190px;
+	}
+	#pong-game-container h2 {
+		border-bottom: 1px solid #000;
+		padding: 10px;
+		}
+	.game-item {
+		background: none repeat scroll 0 0 #CCCCFF;
+		border-bottom: 1px solid #AAAAAA;
+		font-size: 12px;
+		padding: 5px;
+		}
+		.game-item .game-item-players {
+			float: right;
+			font-weight: bold;
+			}
+	.game-item:hover {
+		background: #eeeeff;
+		cursor: pointer;
+		}
+		
+	.game-item.game-full,
+	.game-item.game-full:hover {
+		background: #ffcccc;
+		cursor: default;
+		}
+	
+#pong-create-container {
+	border: 1px solid #000;	
+	float: left;
+	margin-left: 30px;
+	width: 190px;
+	}
+	#pong-create-container h2 {
+		border-bottom: 1px solid #000;
+		padding: 10px;
+		}
+	#pong-create-form {
+		padding: 10px;
+		}
+	

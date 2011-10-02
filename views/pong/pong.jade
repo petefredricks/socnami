@@ -1,0 +1,25 @@
+div.pong-container
+	div.pong-paddle-container.pong-home
+		div.pong-paddle='&nbsp;'
+
+	div.pong-score-home
+		div.pong-score=0
+
+	div.pong-paddle-container.pong-away
+		div.pong-paddle='&nbsp;'
+
+	div.pong-score-away
+		div.pong-score=0
+
+	div.pong-ball='&nbsp;'
+
+div#pong-game-container
+	h2='Join a game:'
+
+div#pong-create-container
+	h2='Create a new game:'
+	form#pong-create-form
+		input#pong-game-name(type="text")
+		br
+		br
+		input#pong-game-name-button(type="submit", value="Create Game")
