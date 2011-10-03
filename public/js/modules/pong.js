@@ -23,115 +23,162 @@ var pongGame = (function() {
 		ball: 15,
 		paddleHeight: 100,
 		margin: 40,
-		speed: 3,
-		adjSpeed: 3,
+		speed: 5,
+		adjSpeed: 5,
 		slope: .3,
-		dir: 'right',
+		dir: 'home',
 		status: 'start',
-		skill: 30 
+		skill: 30,
+		netTop: 0,
+		newTop: 0,
+		lastTop: 0,
+		side: 'home',
+		game: null,
+		moveDeferred: new $.Deferred()
 	}
 
 	var bound = {
 		top: 0,
-		left: params.margin,
-		right: params.width - params.margin - params.ball,
-		bottom: params.height - params.ball
+		bottom: params.height - params.ball,
+		away: params.margin,
+		home: params.width - params.margin - params.ball,
+		paddle: params.height - params.paddleHeight
 	}
 	
 	var container = null;
-	var home = {};
-	var away = {};
+	var gamesContainer = null;
+	var scoreboard = null;
+	var paddles = {};
 	var ball = {};
-	var netTop = 0;
-	var lastTop = 0;
 	
 	function init() {
 		
-		container = $('div.pong-container').show();
-		
-		home.paddle = {
-			el: container.find('div.pong-home').find('div.pong-paddle'),
-			height: params.paddleHeight
-		}
-		home.score = {
-			el: container.find('div.pong-score-home').find('div.pong-score'),
-			count: 0
-		}
-
-		away.paddle = {
-			el: container.find('div.pong-away').find('div.pong-paddle'),
-			height: params.paddleHeight
-		}
-		away.score = {
-			el: container.find('div.pong-score-away').find('div.pong-score'),
-			count: 0
-		}
-
+		container = $('div.pong-container');
+		gamesContainer = $('div#pong-games-container');
 		ball.el = container.find('div.pong-ball');
-		ball.pos = ball.el.position();
 		
-		home.paddle.offset = home.paddle.el.offset().top;
+		paddles.home = container.find('div.pong-home').find('div.pong-paddle');
+		paddles.away = container.find('div.pong-away').find('div.pong-paddle');
+		
+		function Score(selector) {
+			var el = container.find(selector).find('div.pong-score');
+			var count = 0;
+			
+			this.add = function() {
+				el.html(++count);
+			} 
+		}
+		
+		scoreboard = {
+			home: new Score('div.pong-score-home'),
+			away: new Score('div.pong-score-away')
+		}
 		
 		// EVENTS
-		$(window).bind('mousemove', function(ev) {
-
-			var newTop = ev.pageY - home.paddle.offset - 50;
-
-			if (newTop < 0) {
-				newTop = 0;
-			}
-
-			if (newTop > 300) {
-				newTop = 300;
-			}
-
-			home.paddle.el.css('top', newTop);
-			//socket.emit('paddle-move', newTop);
-
-			netTop = lastTop - newTop;
-			lastTop = newTop;
-		});
 
 		socket.on('paddle-move', function (top) {
-			away.paddle.el.css('top', top);
+			paddles[oppositeDay(params.side)].css('top', top);
 		});
 
 		socket.on('ball-start', function () {
 			moveBall();
-			params.status = 'running';
 		});
 
 		socket.on('ball-reset', function () {
-			ball.el.removeAttr('style').stop(true);
-			params.speed = params.adjSpeed = 3;
-			params.slope = .3;	
-			ball.pos = ball.el.position();
-			params.status = 'start';
+			reset();
+		});
+		
+		socket.on('ball-hit', function(info) {
+			
+			params.dfd.done(function() {
+				
+				moveBall(info);
+			});
+		});
+		
+		socket.on('ball-score', function(side) {
+			
+			ball.el.stop(true).hide();
+
+			scoreboard[oppositeDay(side)].add();
+
+			params.status = 'dead';
 		});
 
 		container.click(function() {
 
 			switch (params.status) {
 				case 'start':
-				case 'paused':
-					moveBall();
 					params.status = 'running';
 					socket.emit('ball-start');
-					break;/*
-				case 'running':
-					ball.el.stop(true);
-					ball.pos = ball.el.position();
-					params.status = 'paused';
-					break;*/
+					break;
 				case 'dead':
-					ball.el.removeAttr('style').stop(true);
-					params.speed = params.adjSpeed = 3;
-					params.slope = .3;	
-					ball.pos = ball.el.position();
 					params.status = 'start';
 					socket.emit('ball-reset');
 					break;
 			}
+		});
+	
+		$('#pong-create-container').submit(function() {
+
+			var val = $('#pong-game-name').val();
+
+			if (val) {
+				socket.emit('game-new', val);
+				$('#pong-game-name').val('')
+			}
+
+			return false;
+		});
+
+
+		gamesContainer.find('div.game-item').live('click', function() {
+
+			var gameEl = $(this);
+
+			socket.emit('game-join', gameEl.data('id'));
+
+			return false;
+		});
+	}
+	
+	function reset(game) {
+		
+		if (game) {
+			params.game = game.id;
+			params.side = game.side;
+		}
+		
+		$(window).unbind('mousemove.pong');
+		
+		container.show();
+		
+		// these reset everything
+		ball.el.removeAttr('style').stop(true);
+		params.speed = params.adjSpeed = 3;
+		params.slope = .3;	
+		params.status = 'start';
+		
+		ball.pos = ball.el.position();
+		paddles.offset = container.offset().top;
+		
+		$(window).bind('mousemove.pong', function(ev) {
+
+			var newTop = ev.pageY - paddles.offset - (params.paddleHeight / 2);
+
+			if (newTop < 0) {
+				newTop = 0;
+			}
+
+			if (newTop > bound.paddle) {
+				newTop = bound.paddle;
+			}
+
+			paddles[params.side].css('top', newTop);
+			socket.emit('paddle-move', newTop);
+			
+			params.netTop = params.lastTop - newTop;
+			params.lastTop = newTop;
 		});
 	}
 	
@@ -142,13 +189,15 @@ var pongGame = (function() {
 			case "right":return "left";
 			case "top":return "bottom";
 			case "bottom":return "top";
+			case "home":return "away";
+			case "away":return "home";
 			default:return value;
 		}
 	}
 	
 	// y = mx + b
 	function getNextPosition() {
-			
+		
 		var m = params.slope;
 		var b = ball.pos.top - (m * ball.pos.left);
 		var x = bound[params.dir];
@@ -174,30 +223,25 @@ var pongGame = (function() {
 		return c * params.adjSpeed;
 	}
 	
-	function moveBall() {
+	function moveBall(update) {
+		
+		if (update) {
+			$.extend(params, update);
+		}
 		
 		var newPos = getNextPosition();
 		var time = getTime(newPos);
 		
-		ball.el.animate(newPos, time, 'linear', nextMove);
 		ball.pos = newPos;
 		
-		if (false) {
-			var random = Math.floor(Math.random() * 10) * params.skill;
-			var paddleSpeed = round(100 + random + (time * .5), 0);
-
-			away.paddle.top = round(ball.pos.top - (away.paddle.height / 2) - (params.ball / 2), 0);
-
-			if (away.paddle.top < 0) {
-				away.paddle.top = 0;
+		params.dfd = ball.el.animate(newPos, time, 'linear').promise();
+		
+		params.dfd.done(function() {
+			
+			if (params.dir == params.side) {
+				nextMove();
 			}
-
-			if (away.paddle.top > 300) {
-				away.paddle.top = 300;
-			}
-
-			away.paddle.el.animate({top: away.paddle.top}, paddleSpeed, 'swing');
-		}	
+		});
 	}
 			
 	function comparePositions(p1, p2) {
@@ -212,78 +256,85 @@ var pongGame = (function() {
 	}
 	
 	function nextMove() {
-				
+
 		params.slope = -1 * params.slope;
 		
-		if (params.speed > .5) {
-			params.speed *= 0.99;
-		}
-		
-		if (ball.pos.left == bound[params.dir]) {
-		
+		// if hit left or right wall
+		if (ball.pos.left == bound[params.side]) {
+
 			if (Math.abs(params.slope) > 0.5) {
 				params.slope = params.slope > 0 ? 0.5 : -0.5;
 			}
 
-			if (params.dir == 'right') {
-				
-				var paddlePos = home.paddle.el.position().top;
-				var hitPaddle = comparePositions([ball.pos.top, ball.pos.top + 15], [paddlePos, paddlePos + 100]);
+			var ballPos = [ball.pos.top, ball.pos.top + params.ball];
+			var paddlePos = [params.lastTop, params.lastTop + params.paddleHeight];
+			var hitPaddle = comparePositions(ballPos, paddlePos);
 
-				if (!hitPaddle) {
-					away.paddle.el.stop();
-					ball.el.stop(true).hide();
-					away.score.count++;
-					away.score.el.html(away.score.count);
-					params.status = 'dead';
-					return;
-				}
-				
-				params.slope += round(netTop / 50, 1);
-				params.adjSpeed = params.speed - Math.abs(netTop) / 100;
-			}
-			
-			if (params.dir == 'left') {
-				
-				var paddleAwayPos = away.paddle.el.position();
-				var hitPaddleAway = comparePositions([ball.pos.top, ball.pos.top + 15], [paddleAwayPos.top, paddleAwayPos.top + away.paddle.height]);
+			if (hitPaddle) {
 
-				if (!hitPaddleAway) {
-					away.paddle.el.stop();
-					ball.el.stop(true).hide();
-					home.score.count++;
-					home.score.el.html(home.score.count);
-					params.status = 'dead';
-					return;
+				if (params.speed > .5) {
+					params.speed *= 0.99;
 				}
+
+				var dir = oppositeDay(params.dir);
+				var slope = params.slope + (round(params.netTop / 50, 1) * (dir == 'away' ? 1 : -1));
+				var speed = params.speed - Math.abs(params.netTop / 50);
+
+				socket.emit('ball-hit', {
+					slope: slope, 
+					adjSpeed: speed, 
+					dir: dir
+				});
 			}
-			
-			params.dir = oppositeDay(params.dir);
-		}		
-		
-		moveBall();
+			else {
+				socket.emit('ball-score', params.side);
+			}
+
+		}
+		else {
+			socket.emit('ball-hit', { slope: params.slope });
+		}
 	}
 	
 	function addGame(game) {
-		var html = ['<div class="game-item" data-id="', game.id, '">',
-			'<span class="game-item-name">', game.name, '</span><span class="game-item-players">(', game.players, ')</span>',
-		'</div>'];
 		
-		$('#pong-game-container').append(html.join(''));
+		var item = getGameItem(game.id);
+
+		if (!item) {
+			
+			var html = ['<div class="game-item" data-id="', game.id, '">',
+				'<span class="game-item-name">', game.name, '</span><span class="game-item-players">(', game.players, ')</span>',
+			'</div>'];
+
+			gamesContainer.append(html.join(''));
+		}
+		
+		return (!item);
 	}
 	
 	function updateGame(game) {
 		
-		$('#pong-game-container')
-			.find('div.game-item[data-id=' + game.id + ']')
-			.find('span.game-item-players')
-			.html('(' + game.players + ')');
+		var item = getGameItem(game.id);
+		
+		if (item) {
+			item.find('span.game-item-players').html('(' + game.players + ')');
+		}
+		
+		return (item);
+	}
+	
+	function getGameItem(id) {
+		
+		var item = gamesContainer.find('div.game-item[data-id="' + id + '"]');
+		
+		return item.length ? item : null;
 	}
 	
 	return {
 		init: init,
 		addGame: addGame,
-		updateGame: updateGame
+		updateGame: updateGame,
+		reset: reset
 	}
 	
 })();
@@ -301,7 +352,7 @@ socket.on('connect', function () {
 	});
 	
 	socket.on('game-joined', function(game) {
-		pongGame.init(game);
+		pongGame.reset(game);
 	});
 	
 	socket.on('game-list', function(games) {
@@ -317,25 +368,5 @@ socket.on('connect', function () {
 
 $(document).ready(function() {
 	
-	$('#pong-create-container').submit(function() {
-
-		var val = $('#pong-game-name').val();
-
-		if (val) {
-			socket.emit('game-new', val);
-			$('#pong-game-name').val('')
-		}
-
-		return false;
-	});
-	
-	
-	$('#pong-game-container').find('div.game-item').live('click', function() {
-
-		var gameEl = $(this);
-		
-		socket.emit('game-join', gameEl.data('id'));
-
-		return false;
-	});
-})
+	pongGame.init();
+});

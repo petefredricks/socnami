@@ -38,7 +38,7 @@ app.get('/pong', function(req, res){
 	});
 });
 
-app.listen(3000);
+app.listen(80);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 io.sockets.on('connection', function (socket) {
@@ -51,15 +51,33 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('game-list', games);
 	
 	socket.on('ball-start', function () {
-		socket.broadcast.emit('ball-start');
+		socket.get('game', function(err, game) {
+			io.sockets.in(game.id).emit('ball-start');
+		});
 	});
 	
 	socket.on('ball-reset', function () {
-		socket.broadcast.emit('ball-reset');
+		socket.get('game', function(err, game) {
+			io.sockets.in(game.id).emit('ball-reset');
+		});
+	});
+	
+	socket.on('ball-hit', function (info) {
+		socket.get('game', function(err, game) {
+			io.sockets.in(game.id).emit('ball-hit', info);
+		});
+	});
+	
+	socket.on('ball-score', function (side) {
+		socket.get('game', function(err, game) {
+			io.sockets.in(game.id).emit('ball-score', side);
+		});
 	});
 	
 	socket.on('paddle-move', function (top) {
-		socket.broadcast.emit('paddle-move', top);
+		socket.get('game', function(err, game) {
+			socket.broadcast.in(game.id).emit('paddle-move', top);
+		});
 	});
 	
 	socket.on('game-new', function (name) {
@@ -86,10 +104,13 @@ io.sockets.on('connection', function (socket) {
 					games[oldId][oldGame.side] = false;
 
 					io.sockets.emit('game-update', games[oldId]);
+					
+					socket.leave('/' + oldId); 
 				}
 				
+				socket.join(id);
 				socket.set('game', {id:id, side:'home'}, function() {
-					socket.emit('game-joined', games[id]);
+					socket.emit('game-joined', {id:id, side:'home'});
 					io.sockets.emit('game-created', games[id]);
 				});
 			});
@@ -102,7 +123,6 @@ io.sockets.on('connection', function (socket) {
 	socket.on('game-join', function (id) {
 		
 		if (games[id] && games[id].players < 2) {
-			
 			var side;
 			
 			if (!games[id].home) {
@@ -112,10 +132,12 @@ io.sockets.on('connection', function (socket) {
 				side = 'away';
 			}
 			
+			games[id][side] = true;
 			++games[id].players;
 			
+			socket.join(id);
 			socket.set('game', {id:id, side:side}, function() {
-				socket.emit('game-joined', id);
+				socket.emit('game-joined', {id:id, side:side});
 				io.sockets.emit('game-update', games[id]);
 			});
 		}
@@ -161,7 +183,6 @@ function getLatency(socket, times) {
 				}
 				else {
 					socket.set('latency', lagArray.avg());
-					console.log(lagArray.avg());
 				}
 				
 			});
