@@ -1,0 +1,23 @@
+.module {
+	border: 1px solid #000;
+	margin-bottom: 14px;
+	opacity: 0;
+	}
+	.module-header {
+		background: #333;
+		color: #fff;
+		padding: 10px;
+	}
+	.module-body {
+		background: #fff;
+		border: 5px solid #000;
+		border-top: none;
+		color: #000;
+		padding: 15px;
+	}
+	
+.ui-sortable-placeholder {
+	background: #ccffcc;
+	border: 1px dashed #999;
+	margin-bottom: 14px
+}

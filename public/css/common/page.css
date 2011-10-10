@@ -1,0 +1,17 @@
+.page {
+	bottom: 0;
+	left: 0;
+	overflow: auto;
+	padding: 20px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.column {
+    float: left;
+    margin-left: 14px;
+    min-height: 300px;
+    width: 300px;
+}
+

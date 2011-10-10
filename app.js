@@ -38,9 +38,17 @@ app.get('/pong', function(req, res){
 	});
 });
 
+app.get('/', function(req, res){
+	res.render('index', {
+		title: 'Socnami'
+	});
+});
+
 app.listen(80);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
+
+// SOCKETS...
 io.sockets.on('connection', function (socket) {
 	
 	socket.set('latency-array', []);
@@ -190,6 +198,7 @@ function getLatency(socket, times) {
 	});
 }
 
+// tools
 Array.prototype.avg = function() {
 	var av = 0;
 	var cnt = 0;

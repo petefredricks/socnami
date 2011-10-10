@@ -3,10 +3,17 @@ html
 	head
 		title= title
 		link(rel='stylesheet', href='/css/common/reset.css')
+		link(rel='stylesheet', href='/css/common/layout.css')
+		link(rel='stylesheet', href='/css/common/page.css')
+		link(rel='stylesheet', href='/css/common/module.css')
+		link(rel='stylesheet', href='/css/common/launcher.css')
 		link(rel='stylesheet', href='/css/themes/darkbeach/darkbeach.css')
-		link(rel='stylesheet', href='/css/modules/pong.css')
+		link(rel='stylesheet', href='/css/modules/facebook.css')
 		script(src="/socket.io/socket.io.js")
-		script(src="/js/libraries/jquery.js")
+		script(src="/js/libraries/jquery-1.6.4.js")
+		script(src="/js/libraries/jquery-ui-1.8.16.js")
 		script(src="/js/libraries/highcharts.js")
-		script(src="/js/modules/pong.js")
+		script(src="/js/classes/application.js")
+		script(src="/js/classes/page.js")
+		script(src="/js/classes/module.js")
 	body!= body
