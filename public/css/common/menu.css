@@ -1,0 +1,53 @@
+.app-menu {
+	background: none repeat scroll 0 0 #CCCCCC;
+    position: absolute;
+    width: 300px;
+    z-index: 10;
+	}
+	.app-menu-handle {
+		background: none repeat scroll 0 0 #000000;
+		bottom: -25px;
+		color: #FFFFFF;
+		cursor: pointer;
+		height: 25px;
+		position: absolute;
+		right: 0;
+		width: 70px;
+		}
+		.app-menu-handle .handle-text {
+			padding-top: 7px;
+			text-align: center;
+			}
+	#socnami-launcher-desktop {
+		}
+	#socnami-launcher-menu {
+		background: none repeat scroll 0 0 #000000;
+		bottom: 0;
+		color: #FFFFFF;
+		cursor: pointer;
+		height: 20px;
+		left: 0;
+		padding: 5px 10px;
+		position: absolute;
+		right: 0;
+		}
+		#socnami-launcher-menu span {
+			float: right;
+			}
+		
+	#socnami-launcher-menu:hover {
+		background: none repeat scroll 0 0 #999;
+		color: #000;
+		}
+	
+	
+.launcher-icon {
+    background: none repeat scroll 0 0 #555555;
+    cursor: pointer;
+    float: left;
+    height: 60px;
+    margin: 20px;
+    width: 60px;
+}
+
+.ui-effects-transfer { border: 2px dotted gray; } 
