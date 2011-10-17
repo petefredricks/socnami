@@ -1,111 +1,45 @@
-var app = (function($) {
+var APP = (function($) {
 	
 	var elmts = {};
-	var status = {};
 	var isAnimated = true;
-	var timer = {};
 	var currentPage = null; 
 	var pages = [];
+	var menus = [];
 	
 	function init() {
 		
 		var data = getData();
 		
-		elmts.launcher = $('#socnami-launcher');
-		elmts.launcherHandle = $('#socnami-launcher-handle');
 		elmts.viewport = $('#socnami-viewport');
+		elmts.wrapper = $('#socnami-wrapper');
 		
 		for (var i = 0; i < data.pages.length; i++) {
 			pages[i] = new Page(i);
+			pages[i].init(data.pages[i].modules);
 		}
 		
 		currentPage = pages[data.current];
-		currentPage.init();
+		currentPage.draw();
+		currentPage.bindListeners();
 		
-		bindListeners();
+		for (var type in APP.rules.menus) {
+			var menu = new Menu(type);
+			elmts.wrapper.append(menu.draw());
+		}
+		
+		getSaveSettings();
+	}
+	
+	function getSaveSettings() {
+		//console.log(pages)
 	}
 	
 	function getData() {
 		return DATA;
 	}
 	
-	function oppositeDay(value) {
-		
-		switch(value) {
-			case 'left':return 'right';
-			case 'right':return 'left';
-			case 'top':return 'bottom';
-			case 'bottom':return 'top';
-			case 'open':return 'close';
-			case 'close':return 'open';
-		}
-		
-		if (typeof(value) == 'number') {
-			return value * -1;
-		}
-		
-		return value;
-	}
-	
-	function toggleLauncher(ev) {
-		
-		if (ev && ev.data && ev.data.delay) {
-			
-			if (ev.data.status == oppositeDay(status.launcher)) {
-				timer.launcher = window.setTimeout(toggleLauncher, ev.data.delay);
-			}
-			
-			return;
-		}
-		
-		var newStatus, top;
-		
-		switch (status.launcher) {
-				
-			case 'closing':
-			case 'opening':
-				return;
-				break;
-				
-			case 'open':
-				status.launcher = 'closing';
-				newStatus = 'close';
-				top = -400;
-				break;
-			
-			// is closed
-			default:
-				status.launcher = 'opening';
-				newStatus = 'open';
-				top = 0;
-				break;
-		}
-		
-		elmts.launcher.animate(
-			{ top: top }, 
-			getAnimateSpeed(500), 
-			function() {
-				elmts.launcherHandle.find('span').text(oppositeDay(newStatus));
-				status.launcher = newStatus;
-			}
-		);
-	}
-	
 	function getAnimateSpeed(ms) {
 		return isAnimated ? ms : 0;
-	}
-	
-	function bindListeners() {
-		elmts.launcherHandle.bind('click', toggleLauncher);
-		
-		elmts.launcher.bind('mouseleave', {delay: 1000, status: 'close'}, toggleLauncher);
-		elmts.launcher.bind('mouseenter', function() {
-			if (timer.launcher) {
-				window.clearTimeout(timer.launcher);
-			}
-		});
-		
-		elmts.launcher.find('div.launcher-icon').bind('click', launchModule)
 	}
 	
 	function launchModule() {
@@ -114,19 +48,11 @@ var app = (function($) {
 		var type = icon.data('type');
 		var column = $('div.column:first');
 		
-		var module = currentPage.addModule(type);
-		var options = { to: module.el, className: "ui-effects-transfer" };
-		
-		column.prepend(module.el);
-		
-		
-		
+		var module = currentPage.drawModule(type);
+		var options = {to: module.el, className: "ui-effects-transfer"};
 		
 		$(this).effect('transfer', options, 500, function() {
 			module.el.animate({opacity:1},200);
-			
-			var page = new Page();
-			page.bindListeners();
 		});
 	}
 	
@@ -135,23 +61,24 @@ var app = (function($) {
 	return {
 		getData: getData,
 		pages: pages,
-		elmts: elmts
+		getAnimateSpeed: getAnimateSpeed,
+		elmts: elmts,
+		menus: menus
 	}
 	
 })(jQuery);
 
-app.rules = {}
-
-app.rules.modules = {}
-
-app.rules.modules.facebook = {
-	title: 'Facebook'
-}
-app.rules.modules.twitter = {
-	title: 'Twitter'
-}
-app.rules.modules.turntable = {
-	title: 'Turntable'
+APP.rules = {
+	modules: {
+		facebook: { title: 'Facebook' },
+		twitter: { title: 'Twitter' },
+		turntable: { title: 'Turntable' }
+	},
+	menus: {
+		launcher: { text: 'New', offset: 200, height: 400 }, 
+		settings: { text: 'Settings', offset: 120, height: 300 }, 
+		account: { text: 'Account', offset: 40, height: 350 }
+	}
 }
 
 DATA = {
@@ -160,37 +87,17 @@ DATA = {
 	pages: [
 		{
 			title: 'Home',
-			cols: [
-				{
-					modules : [
-						{
-							type: 'facebook'
-						},
-						{
-							type: 'twitter'
-						}
-					]
-				},
-				{
-					modules : [
-						{
-							type: 'turntable'
-						}
-					]
-				}
+			modules : [
+				{type: 'facebook', col: 0},
+				{type: 'twitter', col: 1},
+				{type: 'turntable', col: 1},
+				//{ type: 'turntable', pos: {left: 300, top: 50} }
 			]
 		},
 		{
 			title: 'Other',
-			cols: [
-				{
-					modules: [
-						{
-							type: 'facebook',
-							col: 0
-						}
-					]
-				}
+			modules : [
+				{type: 'turntable', pos: {left: 300, top: 50}}
 			]
 		}
 	]

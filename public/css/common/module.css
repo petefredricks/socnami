@@ -7,7 +7,21 @@
 		background: #333;
 		color: #fff;
 		padding: 10px;
-	}
+		position: relative;
+		}
+		.module-close {
+			border-bottom: 1px solid #CCCCCC;
+			border-left: 1px solid #CCCCCC;
+			cursor: pointer;
+			float: right;
+			padding: 3px 7px;
+			position: absolute;
+			right: -1px;
+			top: -1px;
+			}
+		.module-close:hover {
+			color: #ff5555;
+			}
 	.module-body {
 		background: #fff;
 		border: 5px solid #000;
