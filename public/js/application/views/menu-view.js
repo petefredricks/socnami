@@ -3,14 +3,24 @@ var Menu = function(type) {
 	this.rules = APP.rules.menus[this.type];
 	this.timer = null;
 	this.status = 'close';
+	this.uid = UTIL.newUID();
 }
 	
 Menu.prototype.toggle = function(force) {
 	
-	var status = typeof(force) == 'string' ? force : this.status;
+	if (typeof(force) == 'string') {
+
+		if (this.status != force) {
+			this.status = UTIL.oppositeDay(force);
+		}
+		else {
+			return;
+		}
+	}
+
 	var newStatus, newText, top;
 
-	switch (status) {
+	switch (this.status) {
 
 		case 'closing':
 		case 'opening':
@@ -26,6 +36,19 @@ Menu.prototype.toggle = function(force) {
 
 		// is closed
 		default:
+			
+			var m;
+
+			for (var i = 0, len = APP.menus.length; i < len; i++) {
+				m = APP.menus[i];
+				
+				if (m.uid == this.uid) {
+					continue;
+				}
+				
+				m.toggle('close');
+			}
+			
 			this.status = 'opening';
 			newStatus = 'open';
 			newText = 'Close';

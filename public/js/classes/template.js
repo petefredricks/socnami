@@ -1,18 +1,16 @@
 /**
  * Client-side generation of markup from templates.  Templates are written using a classic ASP/JScript syntax.
- *
- * @auther Pete Fredricks
  */
 
-SGAPI.TemplateManager = (function($) {
+jQuery.TemplateManager = (function($) {
 
 	var templateRoot = '',
 		debugging = false,
 		loadedTemplates = {},
 		loadedTemplatePaths = {}
 
-	function setRoot(root) {templateRoot = root;}
-	function setDebug(debug) {debugging = !!debug;}
+	function setRoot(root) { templateRoot = root; }
+	function setDebug(debug) { debugging = !!debug; }
 
 	/**
 	 * This function draws the template using the data (obj) that you pass to it.
@@ -153,8 +151,8 @@ SGAPI.TemplateManager = (function($) {
 				return new Function("data, iterator", [
 					"var p=[],",
 						"print=function(){p.push.apply(p, arguments);},",
-						"printTemplate=function(){p.push(SGAPI.TemplateManager.fillTemplate.apply(SGAPI.TemplateManager,arguments));},",
-						"fillTemplate=function(){return SGAPI.TemplateManager.fillTemplate.apply(SGAPI.TemplateManager,arguments);};",
+						"printTemplate=function(){p.push(jQuery.TemplateManager.fillTemplate.apply(jQuery.TemplateManager,arguments));},",
+						"fillTemplate=function(){return jQuery.TemplateManager.fillTemplate.apply(jQuery.TemplateManager,arguments);};",
 
 					// Convert the template string into pure JavaScript
 					"try{p.push('",
@@ -192,25 +190,24 @@ SGAPI.TemplateManager = (function($) {
 		setDebug: setDebug
 	};
 	
-})(SGAPI.jQuery);
-
+})(jQuery);
 
 // Extend the jQuery object and jQuery collections with some useful methods
-SGAPI.jQuery.extend({
+jQuery.extend({
 	fillTemplate: function(name, obj, context) {
-		return SGAPI.jQuery(SGAPI.TemplateManager.fillTemplate(name, obj, context));
+		return jQuery(jQuery.TemplateManager.fillTemplate(name, obj, context));
 	},
 	loadTemplates: function(args) {
-		return SGAPI.TemplateManager.loadTemplates(args);
+		return jQuery.TemplateManager.loadTemplates(args);
 	}
 });
-SGAPI.jQuery.extend(SGAPI.jQuery.fn, {
+jQuery.extend(jQuery.fn, {
 	fillTemplate: function(name, obj, context) {
-		this.html(SGAPI.TemplateManager.fillTemplate(name, obj, context));
+		this.html(jQuery.fillTemplate(name, obj, context));
 		return this;
 	},
 	appendTemplate: function(name, obj, context) {
-		this.append(SGAPI.TemplateManager.fillTemplate(name, obj, context));
+		this.append(jQuery.fillTemplate(name, obj, context));
 		return this;
 	}
 });

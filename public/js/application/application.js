@@ -1,4 +1,4 @@
-var APP = (function($) {
+(function(win, $) {
 	
 	var elmts = {};
 	var isAnimated = true;
@@ -13,6 +13,11 @@ var APP = (function($) {
 		elmts.viewport = $('#socnami-viewport');
 		elmts.wrapper = $('#socnami-wrapper');
 		
+		var mod = new VIEWS.FacebookModule();
+		var html = mod.render();
+		elmts.viewport.html(html.el)
+		return
+		
 		for (var i = 0; i < data.pages.length; i++) {
 			pages[i] = new Page(i);
 			pages[i].init(data.pages[i].modules);
@@ -24,6 +29,7 @@ var APP = (function($) {
 		
 		for (var type in APP.rules.menus) {
 			var menu = new Menu(type);
+			menus.push(menu);
 			elmts.wrapper.append(menu.draw());
 		}
 		
@@ -56,9 +62,16 @@ var APP = (function($) {
 		});
 	}
 	
-	$(document).ready(init);
+	$(document).ready(function() {
+		
+		$.loadTemplates({
+			paths: ['../templates/module.tmpl'],
+			onload: init
+		});
+	});
 	
-	return {
+	// these are the global vars for application;
+	win.APP = {
 		getData: getData,
 		pages: pages,
 		getAnimateSpeed: getAnimateSpeed,
@@ -66,7 +79,10 @@ var APP = (function($) {
 		menus: menus
 	}
 	
-})(jQuery);
+	win.VIEWS = {};
+	win.MODELS = {};
+	
+})(window, jQuery);
 
 APP.rules = {
 	modules: {
