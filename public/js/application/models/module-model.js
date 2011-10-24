@@ -1,6 +1,8 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+MODELS.Modules = Backbone.Collection.extend({
+	
+});
 
 
+MODELS.Module = Backbone.Model.extend({
+	
+});

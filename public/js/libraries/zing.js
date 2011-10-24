@@ -1,0 +1,4 @@
+(function(win, $) {
+	
+	
+})(window, jQuery);

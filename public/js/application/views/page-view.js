@@ -1,3 +1,24 @@
+VIEWS.Page = Backbone.View.extend({
+
+	className: 'page',
+	
+	initialize: function() {
+		this.el = $(this.el);
+	},
+	
+	render: function() {
+		this.el.fillTemplate('page', {});
+		
+		return this.el;
+	},
+	
+	renderTab: function() {
+		return $.fillTemplate('page-tab', {
+			name: this.model.get('name')
+		});
+	}
+});
+
 var Page = function(id) {
 	this.id = id;
 	this.modules = [];
