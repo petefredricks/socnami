@@ -61,7 +61,7 @@
 			
 			this.render();
 			
-			this.model.bind('change:user', this.alert, this)
+			this.model.bind('change:user', this.alert, this);
 
 		},
 		
