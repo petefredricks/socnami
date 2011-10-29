@@ -1,4 +1,4 @@
-VIEWS.Menu = Backbone.View.extend({
+ELEMENTS.Menu = Backbone.View.extend({
 
 	className: 'app-menu',
 	
@@ -7,6 +7,10 @@ VIEWS.Menu = Backbone.View.extend({
 		
 		this.timer = null;
 		this.status = 'close';
+		
+		this.model.bind('close', function() {
+			this.toggle('close');
+		}, this);
 	},
 	
 	events: {
@@ -28,19 +32,35 @@ VIEWS.Menu = Backbone.View.extend({
 	render: function() {
 		this.el
 			.addClass('app-menu-' + this.model.get('type'))
-			.fillTemplate('app-menu', this.model)
-			.css({
-				right: this.model.get('offset'),
-				height: this.model.get('height'),
-				top: this.model.get('height') * -1
-			});
+			.fillTemplate('app-menu', this.model);
+			
+		this.height = UTIL.getHeight(this.el);
+		this.offset = 40 + (this.model.collection.length - 1) * 80;
+		this.index = 20 - this.model.collection.length;
+		
+		this.el.css({
+			'right': this.offset,
+			'height': this.height,
+			'top': this.height * -1,
+			'z-index': this.index
+		});
 		
 		this.elmts = {
-			'handle': this.$('div.app-menu-handle'),
-			'handleText': this.$('div.handle-text')
+			'handle': this.el.find('div.app-menu-handle'),
+			'handleText': this.el.find('div.handle-text')
 		}
 			
 		return this.el;
+	},
+	
+	killMenus: function() {
+		
+		this.model.collection.each(function(model) {
+			
+			if (model.cid != this.model.cid) {
+				model.trigger('close');
+			}
+		}, this);
 	},
 	
 	toggle: function(force) {
@@ -49,6 +69,7 @@ VIEWS.Menu = Backbone.View.extend({
 
 			if (this.status != force) {
 				this.status = UTIL.oppositeDay(force);
+				this.el.stop();
 			}
 			else {
 				return;
@@ -68,23 +89,13 @@ VIEWS.Menu = Backbone.View.extend({
 				this.status = 'closing';
 				newStatus = 'close';
 				newText = this.model.get('text');
-				top = this.model.get('height') * -1;
+				top = this.height * -1;
 				break;
 
 			// is closed
 			default:
-
-				var m;
-
-				for (var i = 0, len = APP.menus.views.length; i < len; i++) {
-					m = APP.menus.views[i];
-
-					if (m.cid == this.cid) {
-						continue;
-					}
-
-					m.toggle('close');
-				}
+				
+				this.killMenus();
 
 				this.status = 'opening';
 				newStatus = 'open';
@@ -97,10 +108,10 @@ VIEWS.Menu = Backbone.View.extend({
 		
 		function changeHandle() {
 			this.status = newStatus;
-			this.elmts.handleText.hide(300, function() {
+			this.elmts.handleText.hide(200, function() {
 				$(this)
 					.text(newText)
-					.show(300);
+					.show(200);
 			});
 		}
 		

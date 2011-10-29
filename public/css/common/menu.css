@@ -3,6 +3,7 @@
     position: absolute;
     width: 300px;
     z-index: 10;
+	height: 300px;
 	}
 	.app-menu-handle {
 		background: none repeat scroll 0 0 #000000;

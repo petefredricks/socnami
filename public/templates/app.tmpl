@@ -1,6 +1,5 @@
 <!-- #template name="app-menu" -->
+<% printTemplate('app-menu-' + data.get('type')); %>
 <div class="app-menu-handle">
 	<div class="handle-text"><%= data.get('text') %></div>
 </div>
-<!-- #template name="app-menu1" -->
-<% printTemplate('app-menu-' + data.type); %>

@@ -1,45 +1,11 @@
 (function(win, $) {
 	
 	// these are the global vars for application;
-	win.APP = {};
-	win.VIEWS = {};
+	win.ELEMENTS = {};
 	win.MODELS = {};
+	win.COLLECTIONS = {};
 	
-	MODELS.App = Backbone.Model.extend({
-	
-		current: 0,
-		user: 'p.fred',
-		pages: [
-			{
-				name: 'Home',
-				modules : [
-					{type: 'facebook', col: 0},
-					{type: 'twitter', col: 1},
-					{type: 'turntable', col: 1},
-				]
-			},
-			{
-				name: 'Other',
-				modules : [
-					{type: 'turntable', pos: {left: 300, top: 50}}
-				]
-			}
-		],
-		rules: {
-			modules: {
-				facebook: { title: 'Facebook' },
-				twitter: { title: 'Twitter' },
-				turntable: { title: 'Turntable' }
-			},
-			menus: [
-				{ type: 'launcher', text: 'New', offset: 200, height: 400 }, 
-				{ type: 'settings', text: 'Settings', offset: 120, height: 300 }, 
-				{ type: 'account', text: 'Account', offset: 40, height: 350 }
-			]
-		}
-	});
-	
-	VIEWS.App = Backbone.View.extend({
+	var App = Backbone.View.extend({
 
 		el: $('body'),
 		elmts: {},
@@ -48,10 +14,9 @@
 
 		initialize: function () {
 			
-			this.rules = this.model.rules //this.model.get('rules');
+			this.rules = new MODELS.Definitions();
 			
-			console.log(this.model)
-			
+			// common elements
 			this.elmts = {
 				'header': this.$('#socnami-header'),
 				'wrapper': this.$('#socnami-wrapper'),
@@ -61,58 +26,35 @@
 			
 			this.render();
 			
-			this.model.bind('change:user', this.alert, this);
-
-		},
-		
-		events: {
-			'click button': 'prompt'
-		},
-		
-		prompt: function() {
-			var name = prompt('Enter you name:')
-			
-			this.model.set({user: name})
-		},
-		
-		alert: function(x) {
-			console.log(this.model.get('user'))
+			//this.model.bind('change:user', this.alert, this);
 		},
 		
 		render: function() {
 			
-			this._renderMenus();
-			this._renderPages();
-			
-			this.elmts.wrapper.append('<button>click</button>');
-
-			//this.pages = new Pages();
-			//this.menus = new Menus();
+			this.renderMenus();
+			//this.renderPages();
 		},
 		
-		_renderMenus: function() {
+		renderMenus: function() {
 			
-			this.menus = {
-				collection: new MODELS.Menus(),
-				views: []
-			}
+			this.menus = new COLLECTIONS.Menus();
 
 			var list = this.rules.menus;
-			var view;
+			var menu, model;
 			
-			for (var i = 0, len = list.length; i < len; i++) {
+			for (var type in list) {
 				
-				view = new VIEWS.Menu({
-					model: this.menus.collection.add(list[i]).last()
+				model = this.menus.add(list[type]).last();
+				
+				menu = new ELEMENTS.Menu({
+					model: model
 				});
 				
-				this.menus.views.push(view);
-				
-				this.elmts.wrapper.append(view.render());
+				this.elmts.wrapper.append(menu.render());
 			}
 		},
 		
-		_renderPages: function() {
+		renderPages: function() {
 			
 			this.pages = {
 				collection: new MODELS.Pages(),
@@ -124,7 +66,7 @@
 		
 			for (var i = 0, len = list.length; i < len; i++) {
 				
-				view = new VIEWS.Page({
+				view = new ELEMENTS.Page({
 					model: this.pages.collection.add(list[i]).last()
 				});
 				
@@ -146,7 +88,7 @@
 				'../templates/module.tmpl'
 			],
 			onload: function() {
-				win.APP = new VIEWS.App({model: new MODELS.App()});
+				win.APP = new App();
 			}
 		});
 	});

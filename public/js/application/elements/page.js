@@ -1,4 +1,4 @@
-VIEWS.Page = Backbone.View.extend({
+ELEMENTS.Page = Backbone.View.extend({
 
 	className: 'page',
 	

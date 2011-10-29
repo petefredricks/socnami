@@ -105,37 +105,6 @@
 		},
 		
 		/**
-		 * Get a cookie
-		 * @author W3Schools / Matt Null
-		 */	
-		setCookie : function(c_name,value,exdays){
-			var exdate=new Date();
-			exdate.setDate(exdate.getDate() + exdays);
-			var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-			document.cookie=c_name + "=" + c_value;
-		},
-		
-		/**
-		 * Set a cookie
-		 * @author W3Schools / Matt Null
-		 */
-		getCookie : function(c_name){
-			var i,
-				x,
-				y,
-				ARRcookies=document.cookie.split(";");
-			
-			for (i=0;i<ARRcookies.length;i++){
-				x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-				y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-				x=x.replace(/^\s+|\s+$/g,"");
-				if (x==c_name){
-					return unescape(y);
-				}
-			}
-		},		
-		
-		/**
 		 * Simple number rounder.
 		 * @author Pete Fredricks
 		 */
@@ -159,6 +128,24 @@
 			}
 
 			return value;
+		},
+		
+		getHeight: function(el) {
+			
+			var temp = el.clone();
+			
+			temp.css({
+				position: 'absolute',
+				top: -5000,
+				left: -5000
+			})
+			.appendTo('body');
+			
+			var height = temp.height();
+			
+			temp.remove();
+			
+			return height;
 		}
 	};
 
