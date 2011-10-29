@@ -1,9 +1,9 @@
 (function(win, $) {
 	
 	// these are the global vars for application;
-	win.ELEMENTS = {};
-	win.MODELS = {};
-	win.COLLECTIONS = {};
+	win.ELEMENT = {};
+	win.MODEL = {};
+	win.COLLECTION = {};
 	
 	var App = Backbone.View.extend({
 
@@ -14,7 +14,14 @@
 
 		initialize: function () {
 			
-			this.rules = new MODELS.Definitions();
+			this.rules = new MODEL.Definitions();
+			
+			this.pages = new COLLECTION.Pages();
+			this.menus = new COLLECTION.Menus();
+			this.modules = new COLLECTION.Modules();
+			
+			this.pages.fetch();
+			this.modules.fetch();
 			
 			// common elements
 			this.elmts = {
@@ -23,21 +30,16 @@
 				'viewport': this.$('#socnami-viewport'),
 				'footer': this.$('#socnami-footer')
 			}
-			
-			this.render();
-			
-			//this.model.bind('change:user', this.alert, this);
 		},
 		
 		render: function() {
 			
 			this.renderMenus();
-			//this.renderPages();
+			this.renderPages();
+			this.renderModules();
 		},
 		
 		renderMenus: function() {
-			
-			this.menus = new COLLECTIONS.Menus();
 
 			var list = this.rules.menus;
 			var menu, model;
@@ -45,10 +47,7 @@
 			for (var type in list) {
 				
 				model = this.menus.add(list[type]).last();
-				
-				menu = new ELEMENTS.Menu({
-					model: model
-				});
+				menu = new ELEMENT.Menu({ model: model });
 				
 				this.elmts.wrapper.append(menu.render());
 			}
@@ -56,26 +55,38 @@
 		
 		renderPages: function() {
 			
-			this.pages = {
-				collection: new MODELS.Pages(),
-				views: []
-			}
+			this.pages.fetch();
 			
-			var list = this.model.pages;
-			var view;
+			var page, model;
 		
-			for (var i = 0, len = list.length; i < len; i++) {
+			for (var i = 0; i < this.pages.length; i++) {
 				
-				view = new ELEMENTS.Page({
-					model: this.pages.collection.add(list[i]).last()
-				});
+				model = this.pages.at(i);
+				page = new ELEMENT.Page({ model: model });
 				
-				this.pages.views.push(view);
 				
-				this.elmts.footer.prepend(view.renderTab());
+//				page.modules.each(function(m){
+//					m.destroy();
+//				})
+//				page.modules.add([
+//				{ type: 'facebook', col: 0 },
+//				{ type: 'twitter', col: 1 },
+//				{ type: 'turntable', col: 1 }
+//			])
+
+//				this.modules.create({ type: 'turntable', col: 1, page: model.id })
+//				this.modules.create({ type: 'facebook', col: 0, page: model.id  })
+//				this.modules.create({ type: 'twitter', col: 1, page: model.id  })
+//				
+				this.elmts.footer.prepend(page.renderTab());
+				
+				if (i === this.currentPage) {
+					this.elmts.viewport.html(page.render());
+				}
 			}
-			
-			
+		},
+		
+		renderModules: function() {
 		}
 	});
 	
@@ -89,6 +100,7 @@
 			],
 			onload: function() {
 				win.APP = new App();
+				win.APP.render();
 			}
 		});
 	});

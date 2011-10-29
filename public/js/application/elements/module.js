@@ -1,10 +1,14 @@
-ELEMENTS.Module = Backbone.View.extend({
+ELEMENT.Module = Backbone.View.extend({
 
 	className: 'module',
 	
+	initialize: function() {
+		this.el = $(this.el);
+	},
+	
 	render: function() {
-		$(this.el).fillTemplate('module', {});
-		return this;
+		this.el.fillTemplate('module', {});
+		return this.el;
 	}
 });
 

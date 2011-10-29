@@ -1,13 +1,50 @@
-ELEMENTS.Page = Backbone.View.extend({
+ELEMENT.Page = Backbone.View.extend({
 
 	className: 'page',
 	
 	initialize: function() {
+		
 		this.el = $(this.el);
+		this.columns = [];
+		
+		this.modules = APP.modules.filter(function(module) {
+			return (module.get('page') == this.model.id)
+		}, this);
 	},
 	
 	render: function() {
-		this.el.fillTemplate('page', {});
+		
+		var module, column;
+		
+		for (var i = 0, _len = this.modules.length; i < _len; i++) {
+		
+			module = new ELEMENT.Module({model: this.modules[i]});
+			
+			if (UTIL.whatIs(module.model.get('col')) != 'null') {
+				
+				column = module.model.get('col');
+				
+				if (!this.columns[column]) {
+					
+					this.columns[column] = new ELEMENT.Column();
+				}
+				
+				this.columns[column].addModule(module.render());
+				
+			}
+			else {
+				this.el.append(module.render());
+			}
+			
+			module.el.animate({opacity:1}, 300);
+		}
+		
+		//add a last column
+		this.columns[this.columns.length] = new ELEMENT.Column();
+		
+		for (var k = 0; k < this.columns.length; k++) {
+			this.el.append(this.columns[k].render());
+		}
 		
 		return this.el;
 	},
@@ -16,6 +53,26 @@ ELEMENTS.Page = Backbone.View.extend({
 		return $.fillTemplate('page-tab', {
 			name: this.model.get('name')
 		});
+	},
+	
+	update: function() {
+		
+		var column;
+		
+		for (var i = 0, _len = this.columns.length; i < _len; i++) {
+			
+			column = this.columns[i];
+			
+			if (!column.length) {
+				column.el.remove();
+				
+				UTIL.array.remove(this.columns, i);
+				i--;
+				continue;
+			}
+			
+			
+		}
 	}
 });
 
@@ -123,3 +180,30 @@ Page.prototype = {
 		return module;
 	}
 }
+
+ELEMENT.Column = Backbone.View.extend({
+
+	className: 'column',
+	length: 0,
+	
+	initialize: function() {
+		this.el = $(this.el);
+	},
+	
+	render: function() {
+		return this.el;
+	},
+	
+	addModule: function(module) {
+		
+		this.el.append(module);
+		
+		this.length++;
+	},
+	
+	removeModule: function(module) {
+		
+		this.length--;
+	}
+	
+});

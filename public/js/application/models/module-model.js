@@ -1,8 +1,11 @@
-MODELS.Modules = Backbone.Collection.extend({
+COLLECTION.Modules = Backbone.Collection.extend({
 	
+	model: MODEL.Module,
+	
+	localStorage: new Store("modules")
 });
 
 
-MODELS.Module = Backbone.Model.extend({
+MODEL.Module = Backbone.Model.extend({
 	
 });

@@ -1,4 +1,4 @@
-MODELS.Definitions = Backbone.Model.extend({
+MODEL.Definitions = Backbone.Model.extend({
 	
 	modules: {
 		facebook: { title: 'Facebook' },

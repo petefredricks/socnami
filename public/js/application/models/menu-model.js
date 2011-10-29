@@ -1,15 +1,10 @@
-COLLECTIONS.Menus = Backbone.Collection.extend({
-	model: MODELS.Menu,
+COLLECTION.Menus = Backbone.Collection.extend({
+	model: MODEL.Menu,
 	
-	initialize: function() {
-		this.bind('add', this.position, this)
-	},
-	
-	position: function(model) {
-	}
+	initialize: function() {}
 });
 
-MODELS.Menu = Backbone.Model.extend({
+MODEL.Menu = Backbone.Model.extend({
 	
 });
 

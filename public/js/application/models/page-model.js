@@ -1,7 +1,9 @@
-MODELS.Pages = Backbone.Collection.extend({
+COLLECTION.Pages = Backbone.Collection.extend({
 	
+	model: MODEL.Page,
+	
+	localStorage: new Store("pages")
 });
 
-MODELS.Page = Backbone.Model.extend({
-	
+MODEL.Page = Backbone.Model.extend({
 });

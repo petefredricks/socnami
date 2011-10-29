@@ -1,4 +1,4 @@
-MODELS.Account = Backbone.Model.extend({
+MODEL.Account = Backbone.Model.extend({
 	
 	current: 0,
 	user: 'p.fred',

@@ -1,4 +1,4 @@
-ELEMENTS.Menu = Backbone.View.extend({
+ELEMENT.Menu = Backbone.View.extend({
 
 	className: 'app-menu',
 	
