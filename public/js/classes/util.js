@@ -40,8 +40,17 @@
 			if (obj instanceof Date) return "date";
 			if (obj instanceof $) return "jquery";
 			if (obj === null) return "null";
+			
+			// Backbone.js helpers
+			if (Backbone) {
+				if (obj instanceof Backbone.Model) return "model";
+				if (obj instanceof Backbone.View) return "view";
+				if (obj instanceof Backbone.Collection) return "collection";
+			}
+			
 			if ((typeof(HTMLElement) === "object" && obj instanceof HTMLElement) ||
 				(typeof(obj) === "object" && obj.nodeType === 1 && typeof(obj.nodeName) === "string")) return 'element';
+			
 			
 			return typeof(obj);	
 		},
