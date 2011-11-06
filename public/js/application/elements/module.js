@@ -3,17 +3,17 @@ ELEMENT.Module = Backbone.View.extend({
 	className: 'module',
 	
 	initialize: function() {
-		this.el = $(this.el);
-		this.model.set({
-			title: APP.rules.modules[this.model.get('type')].title
-		});
 		
-		console.log(this.model.toJSON())
+		this.el = $(this.el);
+		this.el.data('cid', this.model.cid);
+		
+		this.data = this.model.toJSON();
+		this.data.title = APP.rules.modules[this.data.type].title;
 	},
 	
 	render: function() {
 		this.el
-			.fillTemplate('module', this.model.toJSON())
+			.fillTemplate('module', this.data)
 			.data('cid', this.model.cid);
 			
 		return this.el;

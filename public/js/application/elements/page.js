@@ -21,6 +21,9 @@ ELEMENT.Page = Backbone.View.extend({
 		for (var i = 0, _len = this.modules.length; i < _len; i++) {
 			
 			module = this.modules[i];
+			
+			console.log(module)
+			
 			columnNum = module.get('col');
 			
 			if (!isNaN(columnNum)) {
@@ -37,8 +40,8 @@ ELEMENT.Page = Backbone.View.extend({
 			}
 		}
 		
-		//add a last column
-		column = this.columns.addColumn(this.columns.length);
+		// add a last column
+		column = this.columns.addColumn(99);
 		columnListMap[column.cid] = [];
 		
 		this.columns.each(function(column) {
@@ -72,14 +75,9 @@ ELEMENT.Page = Backbone.View.extend({
 		.bindListeners()
 		.render();
 
-		colEl.data({
-			'position': this.columns.indexOf(column),
-			'cid': column.cid
-		});
+		colEl.data({'cid': column.cid});
 
-		var modEl;
-
-		for (var i = 0; i < count; i++) {
+		for (var i = 0, modEl; i < count; i++) {
 
 			modEl = new ELEMENT.Module({model: modules[i]});
 
@@ -87,6 +85,29 @@ ELEMENT.Page = Backbone.View.extend({
 		}
 
 		this.el.append(colEl);
+	},
+	
+	update: function() {
+		
+		var columns = this.el.find('div.column');
+		
+		var _cid, _modules, _column, _count;
+		
+		for (var i = 0; i < columns.length; i++) {
+			
+			_column = $(columns[i]);
+			_cid = _column.data('cid');
+			_modules = _column.find('div.module');
+			_count = _modules.length;
+			
+			this.columns.updateColumn(_cid, _count, i);
+			
+			for (var k = 0; k < _count; k++) {
+				$(_modules[k]).data('col', i);
+			}
+		}
+		
+		this.columns.checkColumns();
 	}
 });
 
@@ -114,7 +135,7 @@ ELEMENT.Column = Backbone.View.extend({
 	
 	bindListeners: function() {
 		
-		// this is the page element
+		// this is the column element
 		var self = this;
 		
 		this.el.sortable({
@@ -126,21 +147,10 @@ ELEMENT.Column = Backbone.View.extend({
 			revert: 300,
 			handle: 'div.module-header',
 			tolerance: "pointer",
-			start: function() {},
-
-			stop: function(ev, ui) {
-				self.model.collection.checkColumns();
-				
-				console.log(ui)
-			},
-
-			update: function(ev) {
-
-				var target = $(ev.target);
-				var colId = target.data('cid');
-				var count = target.find('div.module').length;
-
-				self.model.collection.updateModuleCount(colId, count);
+			stop: function() {
+				console.time('stop')
+				self.parent.update();
+				console.timeEnd('stop')
 			}
 		});
 		

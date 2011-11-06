@@ -24,6 +24,10 @@
 			this.pages.fetch();
 			this.modules.fetch();
 			
+//			this.modules.each(function(model) {
+//				model.destroy();
+//			});
+			
 			// common elements
 			this.elmts = {
 				'header': this.$('#socnami-header'),
@@ -88,15 +92,7 @@
 		
 		syncToStorage: function() {
 			
-			var self = this;
-			
-			$('div.module').each(function(i) {
-				var module = self.modules.getByCid($(this).data('cid'));
-				
-				module.set({index: i});
-				
-				module.save();
-			});
+			this.modules.indexAndSave($('div.module'));
 		},
 		
 		launchModule: function() {

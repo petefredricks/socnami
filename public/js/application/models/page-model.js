@@ -6,19 +6,30 @@ COLLECTION.Pages = Backbone.Collection.extend({
 	localStorage: new Store("pages")
 });
 
-MODEL.Page = Backbone.Model.extend({
-});
+MODEL.Page = Backbone.Model.extend({});
 
 // Column Models
 COLLECTION.Columns = Backbone.Collection.extend({
 	
 	model: MODEL.Column,
 	
-	addColumn: function(colNumber) {
-		var column = this.at(colNumber);
+	comparator: function(model) {
+		return model.get('index');
+	},
+	
+	getByIndex: function(index) {
+		
+		return this.find(function(model) {
+			return model.get('index') == index;
+		});
+	},
+	
+	addColumn: function(index) {
+		
+		var column = this.getByIndex(index);
 		
 		if (!column) {
-			column = new MODEL.Column();
+			column = new MODEL.Column({index: index});
 			
 			this.add(column, {silent:true});
 		}
@@ -26,38 +37,41 @@ COLLECTION.Columns = Backbone.Collection.extend({
 		return column;
 	},
 	
-	updateModuleCount: function(cid, count) {
-		var column = this.getByCid(cid);
-		
-		column.set({'count': count});
-	},
-	
 	checkColumns: function() {
 		
 		var last = this.last();
 		
 		this.each(function(column) {
+			
 			var count = column.get('count');
 			
-			if (!count && column !== last) {
+			if (!count && column.cid !== last.cid) {
 				this.remove(column);
 			}
 		}, this);
 		
 		if (last.get('count')) {
-			this.add();
+			this.add(new MODEL.Column());
+		}
+	},
+	
+	updateColumn: function(cid, count, index) {
+		var column = this.getByCid(cid);
+		
+		if (column) {
+			column.set({
+				count: count,
+				index: index
+			});
 		}
 	}
 });
 
 MODEL.Column = Backbone.Model.extend({
 	
-	updateCount: function(cid, count) {
-		
-		var column = this.columns.getByCid(cid);
-		
-		if (column) {
-			column.set({'count': count});
-		}
+	defaults: function() {
+		return {
+			index: 99
+		};
 	}
 });

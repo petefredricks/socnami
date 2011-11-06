@@ -27,7 +27,7 @@ _.extend(Store.prototype, {
 	// Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
 	// have an id of it's own.
 	create: function(model) {
-		if (!model.id) model.id = model.attributes.id = UTIL.newUID(20);
+		if (!model.id) model.id = model.attributes.id = UTIL.newUID(10);
 		localStorage.setItem(this.name+"-"+model.id, JSON.stringify(model));
 		this.records.push(model.id.toString());
 		this.save();
@@ -36,6 +36,7 @@ _.extend(Store.prototype, {
 
 	// Update a model by replacing its copy in `this.data`.
 	update: function(model) {
+		console.log('save', model.get('col'))
 		localStorage.setItem(this.name+"-"+model.id, JSON.stringify(model));
 		if (!_.include(this.records, model.id.toString())) this.records.push(model.id.toString());
 		this.save();
