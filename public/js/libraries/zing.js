@@ -1,4 +1,0 @@
-(function(win, $) {
-	
-	
-})(window, jQuery);

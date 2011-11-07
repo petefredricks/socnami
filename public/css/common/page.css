@@ -9,9 +9,9 @@
 	}
 
 .page-tab {
-	border-left: 1px solid #000000;
-    float: right;
-    padding: 10px;		
+	border-right: 1px solid #000;
+    float: left;
+    padding: 10px;	
 	}
 
 .column {

@@ -1,17 +1,17 @@
 // Page Models
-COLLECTION.Pages = Backbone.Collection.extend({
+Collection.Pages = Backbone.Collection.extend({
 	
-	model: MODEL.Page,
+	model: Model.Page,
 	
 	localStorage: new Store("pages")
 });
 
-MODEL.Page = Backbone.Model.extend({});
+Model.Page = Backbone.Model.extend({});
 
 // Column Models
-COLLECTION.Columns = Backbone.Collection.extend({
+Collection.Columns = Backbone.Collection.extend({
 	
-	model: MODEL.Column,
+	model: Model.Column,
 	
 	comparator: function(model) {
 		return model.get('index');
@@ -29,7 +29,7 @@ COLLECTION.Columns = Backbone.Collection.extend({
 		var column = this.getByIndex(index);
 		
 		if (!column) {
-			column = new MODEL.Column({index: index});
+			column = new Model.Column({index: index});
 			
 			this.add(column, {silent:true});
 		}
@@ -51,7 +51,7 @@ COLLECTION.Columns = Backbone.Collection.extend({
 		}, this);
 		
 		if (last.get('count')) {
-			this.add(new MODEL.Column());
+			this.add(new Model.Column());
 		}
 	},
 	
@@ -67,7 +67,7 @@ COLLECTION.Columns = Backbone.Collection.extend({
 	}
 });
 
-MODEL.Column = Backbone.Model.extend({
+Model.Column = Backbone.Model.extend({
 	
 	defaults: function() {
 		return {

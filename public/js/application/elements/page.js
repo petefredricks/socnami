@@ -1,12 +1,10 @@
-ELEMENT.Page = Backbone.View.extend({
+Element.Page = Backbone.View.extend({
 
 	className: 'page',
 	
 	initialize: function() {
 		
-		this.el = $(this.el);
-		
-		this.columns = new COLLECTION.Columns();
+		this.columns = new Collection.Columns();
 		this.modules = this.parent.modules.getByPage(this.model.id);
 		
 		this.columns.bind('add', this.drawColumn, this);
@@ -21,8 +19,6 @@ ELEMENT.Page = Backbone.View.extend({
 		for (var i = 0, _len = this.modules.length; i < _len; i++) {
 			
 			module = this.modules[i];
-			
-			console.log(module)
 			
 			columnNum = module.get('col');
 			
@@ -56,19 +52,13 @@ ELEMENT.Page = Backbone.View.extend({
 		return this.el;
 	},
 	
-	renderTab: function() {
-		return $.fillTemplate('page-tab', {
-			name: this.model.get('name')
-		});
-	},
-	
 	drawColumn: function(column, modules) {
 		
 		var count = UTIL.whatIs(modules) == 'array' ? modules.length : 0;
 
 		column.set({'count': count});
 
-		var colEl = new ELEMENT.Column({
+		var colEl = new Element.Column({
 			model: column,
 			parent: this
 		})
@@ -79,7 +69,7 @@ ELEMENT.Page = Backbone.View.extend({
 
 		for (var i = 0, modEl; i < count; i++) {
 
-			modEl = new ELEMENT.Module({model: modules[i]});
+			modEl = new Element.Module({model: modules[i]});
 
 			colEl.append(modEl.render());
 		}
@@ -111,7 +101,7 @@ ELEMENT.Page = Backbone.View.extend({
 	}
 });
 
-ELEMENT.Column = Backbone.View.extend({
+Element.Column = Backbone.View.extend({
 
 	className: 'column',
 	
@@ -148,9 +138,7 @@ ELEMENT.Column = Backbone.View.extend({
 			handle: 'div.module-header',
 			tolerance: "pointer",
 			stop: function() {
-				console.time('stop')
 				self.parent.update();
-				console.timeEnd('stop')
 			}
 		});
 		

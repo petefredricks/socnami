@@ -1,39 +1,35 @@
 (function(win, $) {
 	
 	// these are the global vars for application;
-	win.ELEMENT = {};
-	win.MODEL = {};
-	win.COLLECTION = {};
+	win.Element = {};
+	win.Model = {};
+	win.Collection = {};
 	
 	var App = Backbone.View.extend({
 
 		el: $('body'),
 		elmts: {},
-		currentPage: 0,
+		currentPage: 'WGmva9sBky7EFt2ymm5P',
 		isAnimated: true,
 
 		initialize: function () {
 			
-			this.rules = new MODEL.Definitions();
+			this.rules = new Model.Definitions();
+			this.settings = new Model.Settings();
 			
-			this.pages = new COLLECTION.Pages();
-			this.menus = new COLLECTION.Menus();
-			this.modules = new COLLECTION.Modules();
+			this.pages = new Collection.Pages();
+			this.menus = new Collection.Menus();
+			this.modules = new Collection.Modules();
 			
-			// get page and module data
-			this.pages.fetch();
+			// get module data
 			this.modules.fetch();
-			
-//			this.modules.each(function(model) {
-//				model.destroy();
-//			});
 			
 			// common elements
 			this.elmts = {
-				'header': this.$('#socnami-header'),
-				'wrapper': this.$('#socnami-wrapper'),
-				'viewport': this.$('#socnami-viewport'),
-				'footer': this.$('#socnami-footer')
+				'header': $('#socnami-header'),
+				'wrapper': $('#socnami-wrapper'),
+				'viewport': $('#socnami-viewport'),
+				'footer': $('#socnami-footer')
 			}
 			
 			this.bindListeners();
@@ -41,6 +37,7 @@
 		
 		render: function() {
 			
+			this.drawFooter();
 			this.renderMenus();
 			this.renderPages();
 		},
@@ -48,37 +45,73 @@
 		renderMenus: function() {
 
 			var list = this.rules.menus;
-			var menu, model;
 			
 			for (var type in list) {
-				
-				model = this.menus.add(list[type]).last();
-				menu = new ELEMENT.Menu({ model: model });
-				
-				this.elmts.wrapper.append(menu.render());
+				this.menus.add(list[type]);
 			}
+		},
+		
+		drawMenu: function(model) {
+			
+			var type = model.get('type');
+			
+			var data = { 
+				model: model,
+				parent: this
+			};
+			var menu;
+			
+			switch(type) {
+				case 'launcher':
+					model.set({modules: this.rules.modules})
+					menu = new Element.Launcher_Menu(data);
+					break;
+				case 'settings':
+					menu = new Element.Settings_Menu(data);
+					break;
+				case 'account':
+					menu = new Element.Account_Menu(data);
+					break;
+			}
+			
+			this.elmts.wrapper.append(menu.render());
 		},
 		
 		renderPages: function() {
 			
 			this.pages.fetch();
-			
-			var page, model;
 		
-			for (var i = 0; i < this.pages.length; i++) {
+			for (var i = 0, _page; i < this.pages.length; i++) {
 				
-				model = this.pages.at(i);
-				page = new ELEMENT.Page({
-					model: model,
-					parent: this
-				});
+				_page = this.pages.at(i);
 				
-				this.elmts.footer.prepend(page.renderTab());
+				this.drawPageTab(_page);
 				
-				if (i === this.currentPage) {
-					this.elmts.viewport.html(page.render());
+				if (_page.id === this.currentPage) {
+					this.drawPage(_page);
 				}
 			}
+		},
+		
+		drawPageTab: function(model) {
+			this.elmts.footerPages.appendTemplate('page-tab', {
+				name: model.get('name')
+			});
+		},
+		
+		drawPage: function(model) {
+			
+			var page = new Element.Page({
+				model: model,
+				parent: this
+			});
+
+			this.elmts.viewport.html(page.render());
+		},
+		
+		drawFooter: function() {
+			this.elmts.footer.fillTemplate('footer');
+			this.elmts.footerPages = $('#footer-pages');
 		},
 		
 		getAnimation: function(speed) {
@@ -88,6 +121,10 @@
 		bindListeners: function() {
 			
 			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
+			
+			this.menus.bind('add', this.drawMenu, this);
+			this.pages.bind('add', this.drawPage, this);
+			this.modules.bind('add', this.drawModule, this);
 		},
 		
 		syncToStorage: function() {
@@ -95,18 +132,11 @@
 			this.modules.indexAndSave($('div.module'));
 		},
 		
-		launchModule: function() {
+		drawModule: function(model) {
 
-			var icon = $(this);
-			var type = icon.data('type');
-			var column = $('div.column:first');
-
-			var module = currentPage.drawModule(type);
-			var options = {to: module.el, className: "ui-effects-transfer"};
-
-			$(this).effect('transfer', options, 500, function() {
-				module.el.animate({opacity:1},200);
-			});
+			var modEl = new Element.Module({model: model});
+			
+			$('div.column:first').append(modEl.render());
 		}
 	});
 	

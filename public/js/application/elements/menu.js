@@ -1,21 +1,17 @@
-ELEMENT.Menu = Backbone.View.extend({
+Element.Menu = Backbone.View.extend({
 
 	className: 'app-menu',
 	
+	timer: null,
+	status: 'close',
+	
 	initialize: function() {
-		this.el = $(this.el);
-		
-		this.timer = null;
-		this.status = 'close';
-		
-		this.model.bind('close', function() {
-			this.toggle('close');
-		}, this);
+		this.bindListeners();
 	},
 	
 	events: {
 		'click div.app-menu-handle': 'toggle',
-		'mouseleave': 'startClose',
+		//'mouseleave': 'startClose',
 		'mouseenter': 'clearTimer'
 	},
 	
@@ -33,7 +29,24 @@ ELEMENT.Menu = Backbone.View.extend({
 		this.el
 			.addClass('app-menu-' + this.model.get('type'))
 			.fillTemplate('app-menu', this.model);
+		
+		this.elmts = {
+			'content': this.el.find('div.app-menu-content'),
+			'handle': this.el.find('div.app-menu-handle'),
+			'handleText': this.el.find('div.handle-text')
+		}
 			
+		this.draw();
+		
+		this.position();
+			
+		return this.el;
+	},
+	
+	draw: function() { /* noop */ },
+	
+	position: function() {
+		
 		this.height = UTIL.getHeight(this.el);
 		this.offset = 40 + (this.model.collection.length - 1) * 80;
 		this.index = 20 - this.model.collection.length;
@@ -44,13 +57,6 @@ ELEMENT.Menu = Backbone.View.extend({
 			'top': this.height * -1,
 			'z-index': this.index
 		});
-		
-		this.elmts = {
-			'handle': this.el.find('div.app-menu-handle'),
-			'handleText': this.el.find('div.handle-text')
-		}
-			
-		return this.el;
 	},
 	
 	killMenus: function() {
@@ -67,6 +73,8 @@ ELEMENT.Menu = Backbone.View.extend({
 		
 		if (typeof(force) == 'string') {
 
+			this.clearTimer();
+			
 			if (this.status != force) {
 				this.status = UTIL.oppositeDay(force);
 				this.el.stop();
@@ -116,5 +124,40 @@ ELEMENT.Menu = Backbone.View.extend({
 		}
 		
 		prom.done($.proxy(changeHandle, this));
+	},
+	
+	bindListeners: function() {
+		
+		this.model.bind('close', function() {
+			this.toggle('close');
+		}, this);
 	}
+});
+
+Element.Launcher_Menu = Element.Menu.extend({
+	
+	extendedEvents: {
+		'click div.launcher-item': 'addModule'
+	},
+	
+	draw: function() {
+		this.elmts.content.fillTemplate('app-menu-launcher', this.model.get('modules'));
+	},
+	
+	addModule: function(ev) {
+		var item = $(ev.target);
+		var type = item.data('type');
+		
+		this.parent.modules.add({
+			'type': type,
+			'page': this.parent.currentPage,
+			'col': 0
+		});
+	}
+});
+
+Element.Account_Menu = Element.Menu.extend({
+});
+
+Element.Settings_Menu = Element.Menu.extend({
 });

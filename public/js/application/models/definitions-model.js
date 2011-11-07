@@ -1,13 +1,13 @@
-MODEL.Definitions = Backbone.Model.extend({
+Model.Definitions = Backbone.Model.extend({
 	
 	modules: {
-		facebook: { title: 'Facebook' },
-		twitter: { title: 'Twitter' },
-		turntable: { title: 'Turntable' }
+		facebook: { title: 'Facebook', type: 'facebook' },
+		twitter: { title: 'Twitter', type: 'twitter' },
+		turntable: { title: 'Turntable', type: 'turntable' }
 	},
 	menus: {
-		account: { type: 'account', text: 'Account', height: 350 },
-		settings: { type: 'settings', text: 'Settings', height: 300 }, 
-		launcher: { type: 'launcher', text: 'New', height: 400 }
+		account: { type: 'account', text: 'Account' },
+		settings: { type: 'settings', text: 'Settings' }, 
+		launcher: { type: 'launcher', text: 'New' }
 	}
 });

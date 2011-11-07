@@ -1,6 +1,6 @@
-COLLECTION.Modules = Backbone.Collection.extend({
+Collection.Modules = Backbone.Collection.extend({
 	
-	model: MODEL.Module,
+	model: Model.Module,
 	
 	localStorage: new Store("modules"),
 	
@@ -41,6 +41,6 @@ COLLECTION.Modules = Backbone.Collection.extend({
 });
 
 
-MODEL.Module = Backbone.Model.extend({
+Model.Module = Backbone.Model.extend({
 	
 });

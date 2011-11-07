@@ -1,5 +1,32 @@
+<!-- #template name="footer" -->
+<div id="footer-add-page">&plus;</div>
+<div id="footer-pages"></div>
+<h1>SOCNAMI</h1>
+
 <!-- #template name="app-menu" -->
-printTemplate('app-menu-' + data.get('type'));
+<div class="app-menu-content"></div>
 <div class="app-menu-handle">
 	<div class="handle-text"><%= data.get('text') %></div>
+</div>
+
+<!-- #template name="app-menu-launcher" -->
+<div class="launcher-list">
+	<% 
+	for (var module in data) { 
+		printTemplate('launcher-item', data[module]);
+	};
+	%>
+</div>
+
+<!-- #template name="launcher-item" -->
+<div class="launcher-item" data-type="<%= data.type %>">
+	<%= data.title %>
+</div>
+
+<!-- #template name="app-menu-settings" -->
+<div class="launcher-list">
+</div>
+
+<!-- #template name="app-menu-account" -->
+<div class="launcher-list">
 </div>

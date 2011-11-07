@@ -36,3 +36,13 @@
 		padding: 10px;
 		width: 300px;
 		}
+	#footer-add-page{
+		background: none repeat scroll 0 0 #aaa;
+		float: right;
+		font-size: 30px;
+		padding: 4px 16px;
+		}
+	#footer-pages {
+		border-left: 1px solid;
+		float: right;
+		}

@@ -1,10 +1,8 @@
-COLLECTION.Menus = Backbone.Collection.extend({
-	model: MODEL.Menu,
-	
-	initialize: function() {}
+Collection.Menus = Backbone.Collection.extend({
+	model: Model.Menu
 });
 
-MODEL.Menu = Backbone.Model.extend({
+Model.Menu = Backbone.Model.extend({
 	
 });
 

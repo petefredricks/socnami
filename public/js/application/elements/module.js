@@ -1,14 +1,25 @@
-ELEMENT.Module = Backbone.View.extend({
+Element.Module = Backbone.View.extend({
 
 	className: 'module',
 	
 	initialize: function() {
 		
-		this.el = $(this.el);
-		this.el.data('cid', this.model.cid);
-		
 		this.data = this.model.toJSON();
 		this.data.title = APP.rules.modules[this.data.type].title;
+	},
+	
+	// The DOM events specific to an item.
+	events: {
+		"click div.module-close" : "destroy"
+	},
+	
+	destroy: function() {
+		
+		this.remove();
+		this.unbind();
+		this.model.destroy();
+		
+		this.parent.update();
 	},
 	
 	render: function() {
@@ -19,17 +30,14 @@ ELEMENT.Module = Backbone.View.extend({
 		return this.el;
 	},
 	
-	changeColumn: function(column) {
-		
-		if (!isNaN(column)) {
-			this.save({'col': column});
-		}
-	},
-	
 	addFloat: function(top, left) {
 		
 		if (!isNaN(top) && !isNaN(left)) {
-			this.save({'col': null, 'top': top, 'left': left});
+			this.save({
+				'col': null, 
+				'top': top, 
+				'left': left
+			});
 		}
 	}
 });
