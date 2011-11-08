@@ -26,27 +26,27 @@ Collection.Columns = Backbone.Collection.extend({
 	
 	addColumn: function(index) {
 		
-		var column = this.getByIndex(index);
+		var mColumn = this.getByIndex(index);
 		
-		if (!column) {
-			column = new Model.Column({index: index});
+		if (!mColumn) {
+			mColumn = new Model.Column({index: index});
 			
-			this.add(column, {silent:true});
+			this.add(mColumn, {silent: true});
 		}
 		
-		return column;
+		return mColumn;
 	},
 	
 	checkColumns: function() {
 		
 		var last = this.last();
 		
-		this.each(function(column) {
+		this.each(function(mColumn) {
 			
-			var count = column.get('count');
+			var count = mColumn.get('count');
 			
-			if (!count && column.cid !== last.cid) {
-				this.remove(column);
+			if (!count && mColumn.cid !== last.cid) {
+				this.remove(mColumn);
 			}
 		}, this);
 		
@@ -56,10 +56,10 @@ Collection.Columns = Backbone.Collection.extend({
 	},
 	
 	updateColumn: function(cid, count, index) {
-		var column = this.getByCid(cid);
+		var mColumn = this.getByCid(cid);
 		
-		if (column) {
-			column.set({
+		if (mColumn) {
+			mColumn.set({
 				count: count,
 				index: index
 			});

@@ -10,16 +10,16 @@
 }
 
 #socnami-wrapper {
-	bottom: 40px;
+	bottom: 36px;
     left: 0;
-	overflow: hidden;
+	overflow: auto;
     position: absolute;
     right: 0;
     top: 21px;
 }
 
 #socnami-viewport {
-	
+	padding: 10px 0;
 }
 
 #socnami-footer {

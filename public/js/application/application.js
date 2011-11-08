@@ -7,15 +7,17 @@
 	
 	var App = Backbone.View.extend({
 
-		el: $('body'),
+		el: 'body',
 		elmts: {},
-		currentPage: 'WGmva9sBky7EFt2ymm5P',
-		isAnimated: true,
+		page: null,
 
 		initialize: function () {
 			
 			this.rules = new Model.Definitions();
 			this.settings = new Model.Settings();
+			
+			this.currentPage = this.settings.get('current');
+			this.isAnimated = this.settings.get('animate');
 			
 			this.pages = new Collection.Pages();
 			this.menus = new Collection.Menus();
@@ -51,62 +53,64 @@
 			}
 		},
 		
-		drawMenu: function(model) {
+		drawMenu: function(mMenu) {
 			
-			var type = model.get('type');
+			var type = mMenu.get('type');
 			
 			var data = { 
-				model: model,
+				model: mMenu,
 				parent: this
 			};
-			var menu;
+			var eMenu;
 			
 			switch(type) {
 				case 'launcher':
-					model.set({modules: this.rules.modules})
-					menu = new Element.Launcher_Menu(data);
+					mMenu.set({modules: this.rules.modules})
+					eMenu = new Element.Launcher_Menu(data);
 					break;
 				case 'settings':
-					menu = new Element.Settings_Menu(data);
+					eMenu = new Element.Settings_Menu(data);
 					break;
 				case 'account':
-					menu = new Element.Account_Menu(data);
+					eMenu = new Element.Account_Menu(data);
 					break;
 			}
 			
-			this.elmts.wrapper.append(menu.render());
+			this.elmts.wrapper.append(eMenu.render());
 		},
 		
 		renderPages: function() {
 			
 			this.pages.fetch();
 		
-			for (var i = 0, _page; i < this.pages.length; i++) {
+			for (var i = 0, _mPage; i < this.pages.length; i++) {
 				
-				_page = this.pages.at(i);
+				_mPage = this.pages.at(i);
 				
-				this.drawPageTab(_page);
+				this.drawPageTab(_mPage);
 				
-				if (_page.id === this.currentPage) {
-					this.drawPage(_page);
+				if (_mPage.id === this.currentPage) {
+					this.drawPage(_mPage);
 				}
 			}
 		},
 		
-		drawPageTab: function(model) {
+		drawPageTab: function(mPage) {
 			this.elmts.footerPages.appendTemplate('page-tab', {
-				name: model.get('name')
+				name: mPage.get('name')
 			});
 		},
 		
-		drawPage: function(model) {
+		drawPage: function(mPage) {
 			
-			var page = new Element.Page({
-				model: model,
+			var ePage = new Element.Page({
+				model: mPage,
 				parent: this
 			});
+			
+			this.page = ePage;
 
-			this.elmts.viewport.html(page.render());
+			this.elmts.viewport.html(ePage.render());
 		},
 		
 		drawFooter: function() {
@@ -132,11 +136,9 @@
 			this.modules.indexAndSave($('div.module'));
 		},
 		
-		drawModule: function(model) {
+		drawModule: function(mModule) {
 
-			var modEl = new Element.Module({model: model});
-			
-			$('div.column:first').append(modEl.render());
+			this.page.drawModule(mModule);
 		}
 	});
 	

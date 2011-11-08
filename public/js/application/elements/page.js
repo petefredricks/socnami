@@ -1,80 +1,94 @@
 Element.Page = Backbone.View.extend({
 
-	className: 'page',
+	className: 'page clear',
+	width: 0,
 	
 	initialize: function() {
 		
 		this.columns = new Collection.Columns();
-		this.modules = this.parent.modules.getByPage(this.model.id);
+		this.modules = this.parent.modules.getPageModules(this.model.id);
 		
 		this.columns.bind('add', this.drawColumn, this);
 	},
 	
+	alertMe: function() {
+		alert('winning');
+	},
+	
 	render: function() {
 		
-		var module, column, columnNum;
+		var mModule, mColumn, columnIndex;
 		var columnListMap = {};
 		var floatList = [];
 		
 		for (var i = 0, _len = this.modules.length; i < _len; i++) {
 			
-			module = this.modules[i];
+			mModule = this.modules[i];
 			
-			columnNum = module.get('col');
+			columnIndex = mModule.get('col');
 			
-			if (!isNaN(columnNum)) {
-				column = this.columns.addColumn(columnNum);
+			if (!isNaN(columnIndex)) {
+				mColumn = this.columns.addColumn(columnIndex);
 				
-				if (!columnListMap[column.cid]) {
-					columnListMap[column.cid] = [];
+				if (!columnListMap[mColumn.cid]) {
+					columnListMap[mColumn.cid] = [];
 				}
 				
-				columnListMap[column.cid].push(module);
+				columnListMap[mColumn.cid].push(mModule);
 			}
 			else {
-				floatList.push(module);
+				floatList.push(mModule);
 			}
 		}
 		
 		// add a last column
-		column = this.columns.addColumn(99);
-		columnListMap[column.cid] = [];
+		mColumn = this.columns.addColumn(99);
 		
-		this.columns.each(function(column) {
+		this.columns.each(function(mColumn) {
 			
-			var id = column.cid;
-			var modules = columnListMap[id];
+			var id = mColumn.cid;
+			var mModules = columnListMap[id];
 			
-			this.drawColumn(column, modules);
+			this.drawColumn(mColumn, mModules);
 		
 		}, this);
 		
 		return this.el;
 	},
 	
-	drawColumn: function(column, modules) {
+	drawColumn: function(mColumn, mModules) {
 		
-		var count = UTIL.whatIs(modules) == 'array' ? modules.length : 0;
+		var count = UTIL.whatIs(mModules) == 'array' ? mModules.length : 0;
 
-		column.set({'count': count});
+		mColumn.set({'count': count});
 
-		var colEl = new Element.Column({
-			model: column,
+		var column = new Element.Column({
+			model: mColumn,
 			parent: this
 		})
 		.bindListeners()
 		.render();
 
-		colEl.data({'cid': column.cid});
+		column.data({'cid': mColumn.cid});
 
-		for (var i = 0, modEl; i < count; i++) {
+		for (var i = 0, _eModule; i < count; i++) {
 
-			modEl = new Element.Module({model: modules[i]});
+			_eModule = new Element.Module({
+				model: mModules[i],
+				parent: this
+			});
 
-			colEl.append(modEl.render());
+			column.append(_eModule.render().fadeIn(APP.getAnimation(1000)));
 		}
-
-		this.el.append(colEl);
+		
+		if (mColumn.get('index') < 0) {
+			this.el.prepend(column);
+		}
+		else {
+			this.el.append(column);
+		}
+		
+		this.el.width(this.width += column.outerWidth(true));
 	},
 	
 	update: function() {
@@ -98,6 +112,15 @@ Element.Page = Backbone.View.extend({
 		}
 		
 		this.columns.checkColumns();
+	},
+		
+	drawModule: function(mModule) {
+		
+		var mColumn = this.columns.addColumn(-1);
+
+		this.drawColumn(mColumn, [mModule]);
+		
+		this.update();
 	}
 });
 
@@ -116,6 +139,7 @@ Element.Column = Backbone.View.extend({
 		
 		this.el.hide(APP.getAnimation(300), function() {
 			$(this).remove();
+			this.parent.el.width(this.parent.width -= $(this).outerWidth(true))
 		});
 	},
 	

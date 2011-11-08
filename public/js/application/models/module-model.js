@@ -8,7 +8,7 @@ Collection.Modules = Backbone.Collection.extend({
 		return model.get('index');
 	},
 	
-	getByPage: function(page) {
+	getPageModules: function(page) {
 		return this.filter(function(module) {
 			return (module.get('page') == page);
 		});
@@ -33,9 +33,9 @@ Collection.Modules = Backbone.Collection.extend({
 				_attr.col = _col;
 			}
 
-			var mod = this.getByCid(_cid);
-			mod.set(_attr);
-			mod.save();
+			var mModule = this.getByCid(_cid);
+			mModule.set(_attr);
+			mModule.save();
 		}
 	}
 });

@@ -61,10 +61,10 @@ Element.Menu = Backbone.View.extend({
 	
 	killMenus: function() {
 		
-		this.model.collection.each(function(model) {
+		this.model.collection.each(function(mMenu) {
 			
-			if (model.cid != this.model.cid) {
-				model.trigger('close');
+			if (mMenu.cid != this.model.cid) {
+				mMenu.trigger('close');
 			}
 		}, this);
 	},
@@ -150,8 +150,7 @@ Element.Launcher_Menu = Element.Menu.extend({
 		
 		this.parent.modules.add({
 			'type': type,
-			'page': this.parent.currentPage,
-			'col': 0
+			'page': this.parent.currentPage
 		});
 	}
 });

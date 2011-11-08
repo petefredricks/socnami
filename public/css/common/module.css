@@ -1,6 +1,7 @@
 .module {
 	border: 1px solid #000;
 	margin-bottom: 14px;
+	display: none;
 	}
 	.module-header {
 		background: #333;

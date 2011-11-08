@@ -18,7 +18,6 @@ Element.Module = Backbone.View.extend({
 		this.remove();
 		this.unbind();
 		this.model.destroy();
-		
 		this.parent.update();
 	},
 	
