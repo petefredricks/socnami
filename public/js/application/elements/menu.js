@@ -1,4 +1,4 @@
-Element.Menu = Backbone.View.extend({
+View.Menu = Backbone.View.extend({
 
 	className: 'app-menu',
 	
@@ -134,7 +134,7 @@ Element.Menu = Backbone.View.extend({
 	}
 });
 
-Element.Launcher_Menu = Element.Menu.extend({
+View.Launcher_Menu = View.Menu.extend({
 	
 	extendedEvents: {
 		'click div.launcher-item': 'addModule'
@@ -145,18 +145,17 @@ Element.Launcher_Menu = Element.Menu.extend({
 	},
 	
 	addModule: function(ev) {
-		var item = $(ev.target);
-		var type = item.data('type');
+		
+		var type = $(ev.target).data('type');
 		
 		this.parent.modules.add({
-			'type': type,
-			'page': this.parent.currentPage
+			'type': type
 		});
 	}
 });
 
-Element.Account_Menu = Element.Menu.extend({
+View.Account_Menu = View.Menu.extend({
 });
 
-Element.Settings_Menu = Element.Menu.extend({
+View.Settings_Menu = View.Menu.extend({
 });

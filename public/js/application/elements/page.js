@@ -1,4 +1,4 @@
-Element.Page = Backbone.View.extend({
+View.Page = Backbone.View.extend({
 
 	className: 'page clear',
 	width: 0,
@@ -62,7 +62,7 @@ Element.Page = Backbone.View.extend({
 
 		mColumn.set({'count': count});
 
-		var column = new Element.Column({
+		var column = new View.Column({
 			model: mColumn,
 			parent: this
 		})
@@ -70,15 +70,23 @@ Element.Page = Backbone.View.extend({
 		.render();
 
 		column.data({'cid': mColumn.cid});
+		
+		var _vModule, _el;
 
-		for (var i = 0, _eModule; i < count; i++) {
+		for (var i = 0; i < count; i++) {
 
-			_eModule = new Element.Module({
+			_vModule = new View.Module({
 				model: mModules[i],
 				parent: this
 			});
+			
+			_el = _vModule.render()
 
-			column.append(_eModule.render().fadeIn(APP.getAnimation(1000)));
+			column.append(_el);
+			
+			_.defer(function() {
+				_el.fadeIn(APP.getAnimation(1000));
+			});
 		}
 		
 		if (mColumn.get('index') < 0) {
@@ -124,12 +132,11 @@ Element.Page = Backbone.View.extend({
 	}
 });
 
-Element.Column = Backbone.View.extend({
+View.Column = Backbone.View.extend({
 
 	className: 'column',
 	
 	initialize: function() {
-		this.el = $(this.el);
 		
 		// bind model events
 		this.model.bind('remove', this.removeColumn, this);
@@ -137,9 +144,14 @@ Element.Column = Backbone.View.extend({
 	
 	removeColumn: function() {
 		
+		var page = this.parent;
+		
 		this.el.hide(APP.getAnimation(300), function() {
-			$(this).remove();
-			this.parent.el.width(this.parent.width -= $(this).outerWidth(true))
+			var column = $(this);
+			var newWidth = (page.width -= column.outerWidth(true));
+			
+			column.remove();
+			page.el.width(newWidth);
 		});
 	},
 	
@@ -167,5 +179,28 @@ Element.Column = Backbone.View.extend({
 		});
 		
 		return this;
+	}
+});
+
+View.Page_Tab = Backbone.View.extend({
+	
+	className: 'page-tab',
+	
+	initialize: function() {
+		
+	},
+	
+	events: {
+		'click': 'loadPage'
+	},
+
+	loadPage: function() {
+		
+		this.model.set({active: true});
+	},
+	
+	render: function() {
+		
+		return this.el.fillTemplate('page-tab', this.model.toJSON());
 	}
 });

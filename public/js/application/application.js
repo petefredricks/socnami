@@ -1,10 +1,5 @@
 (function(win, $) {
 	
-	// these are the global vars for application;
-	win.Element = {};
-	win.Model = {};
-	win.Collection = {};
-	
 	var App = Backbone.View.extend({
 
 		el: 'body',
@@ -66,13 +61,13 @@
 			switch(type) {
 				case 'launcher':
 					mMenu.set({modules: this.rules.modules})
-					eMenu = new Element.Launcher_Menu(data);
+					eMenu = new View.Launcher_Menu(data);
 					break;
 				case 'settings':
-					eMenu = new Element.Settings_Menu(data);
+					eMenu = new View.Settings_Menu(data);
 					break;
 				case 'account':
-					eMenu = new Element.Account_Menu(data);
+					eMenu = new View.Account_Menu(data);
 					break;
 			}
 			
@@ -82,35 +77,32 @@
 		renderPages: function() {
 			
 			this.pages.fetch();
+			
+			var _mPage, _tab;
 		
-			for (var i = 0, _mPage; i < this.pages.length; i++) {
+			for (var i = 0; i < this.pages.length; i++) {
 				
 				_mPage = this.pages.at(i);
+				_tab = new View.Page_Tab({ model: _mPage }).render();
 				
-				this.drawPageTab(_mPage);
+				this.elmts.footerPages.append(_tab);
 				
-				if (_mPage.id === this.currentPage) {
+				if (_mPage.get('active')) {
 					this.drawPage(_mPage);
 				}
 			}
 		},
 		
-		drawPageTab: function(mPage) {
-			this.elmts.footerPages.appendTemplate('page-tab', {
-				name: mPage.get('name')
-			});
-		},
-		
 		drawPage: function(mPage) {
 			
-			var ePage = new Element.Page({
+			this.page = mPage;
+			
+			var vPage = new View.Page({
 				model: mPage,
 				parent: this
 			});
-			
-			this.page = ePage;
 
-			this.elmts.viewport.html(ePage.render());
+			this.elmts.viewport.html(vPage.render());
 		},
 		
 		drawFooter: function() {
@@ -129,6 +121,19 @@
 			this.menus.bind('add', this.drawMenu, this);
 			this.pages.bind('add', this.drawPage, this);
 			this.modules.bind('add', this.drawModule, this);
+			
+			this.pages.bind('change:active', function(mPage) {
+				
+				this.pages.each(function(_mPage) {
+					
+					if (_mPage.cid != mPage) {
+						_mPage.set({active: false}, {silent:true});
+					}
+				});
+				
+				this.drawPage(mPage);
+				
+			}, this);
 		},
 		
 		syncToStorage: function() {
@@ -147,7 +152,6 @@
 		$.loadTemplates({
 			paths: [
 				'../templates/app.tmpl',
-				'../templates/page.tmpl',
 				'../templates/module.tmpl'
 			],
 			onload: function() {
@@ -156,5 +160,10 @@
 			}
 		});
 	});
+	
+	// these are the global vars for application;
+	win.View = {};
+	win.Model = {};
+	win.Collection = {};
 	
 })(window, jQuery);

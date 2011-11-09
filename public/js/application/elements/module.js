@@ -1,4 +1,4 @@
-Element.Module = Backbone.View.extend({
+View.Module = Backbone.View.extend({
 
 	className: 'module',
 	
