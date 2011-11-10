@@ -23,7 +23,7 @@ Collection.Modules = Backbone.Collection.extend({
 			_cid = _module.data('cid');
 			_col = _module.data('col');
 			_attr = {index: i};
-
+			
 			if (isNaN(_col)) {
 				_pos = _module.position();
 				_attr.left = _pos.left;
@@ -34,6 +34,7 @@ Collection.Modules = Backbone.Collection.extend({
 			}
 
 			var mModule = this.getByCid(_cid);
+			
 			mModule.set(_attr);
 			mModule.save();
 		}

@@ -149,7 +149,8 @@ View.Launcher_Menu = View.Menu.extend({
 		var type = $(ev.target).data('type');
 		
 		this.parent.modules.add({
-			'type': type
+			'type': type,
+			'col': -1
 		});
 	}
 });

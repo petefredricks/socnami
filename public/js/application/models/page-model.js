@@ -3,10 +3,32 @@ Collection.Pages = Backbone.Collection.extend({
 	
 	model: Model.Page,
 	
-	localStorage: new Store("pages")
+	localStorage: new Store("pages"),
+	
+	saveAll: function() {
+		
+		this.each(function(_mPage) {
+			_mPage.save();
+		});
+	},
+	
+	setActive: function(mPage) {
+		
+		this.each(function(_mPage) {
+					
+			if (_mPage.cid != mPage.cid) {
+				_mPage.set({ active: false });
+			}
+		});
+	}
 });
 
-Model.Page = Backbone.Model.extend({});
+Model.Page = Backbone.Model.extend({
+	defaults: {
+		name: 'New Page',
+		active: true
+	}
+});
 
 // Column Models
 Collection.Columns = Backbone.Collection.extend({

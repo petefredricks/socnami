@@ -11,7 +11,6 @@
 			this.rules = new Model.Definitions();
 			this.settings = new Model.Settings();
 			
-			this.currentPage = this.settings.get('current');
 			this.isAnimated = this.settings.get('animate');
 			
 			this.pages = new Collection.Pages();
@@ -30,6 +29,14 @@
 			}
 			
 			this.bindListeners();
+		},
+		
+		events: {
+			'click #footer-add-page': 'createPage'
+		},
+		
+		createPage: function() {
+			this.pages.create();
 		},
 		
 		render: function() {
@@ -82,6 +89,8 @@
 		
 			for (var i = 0; i < this.pages.length; i++) {
 				
+				console.log(_mPage)
+				
 				_mPage = this.pages.at(i);
 				_tab = new View.Page_Tab({ model: _mPage }).render();
 				
@@ -119,31 +128,33 @@
 			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
 			
 			this.menus.bind('add', this.drawMenu, this);
-			this.pages.bind('add', this.drawPage, this);
 			this.modules.bind('add', this.drawModule, this);
 			
-			this.pages.bind('change:active', function(mPage) {
+			this.pages.bind('add', this.changePage, this);
+			this.pages.bind('change:active', this.changePage, this);
+		},
+		
+		changePage: function(mPage, value) {
+			
+			if (value) {
 				
-				this.pages.each(function(_mPage) {
-					
-					if (_mPage.cid != mPage) {
-						_mPage.set({active: false}, {silent:true});
-					}
-				});
-				
+				this.pages.setActive(mPage);
 				this.drawPage(mPage);
-				
-			}, this);
+			}
+			else {
+				mPage.trigger('clear');
+			}
 		},
 		
 		syncToStorage: function() {
 			
 			this.modules.indexAndSave($('div.module'));
+			this.pages.saveAll();
 		},
 		
 		drawModule: function(mModule) {
 
-			this.page.drawModule(mModule);
+			this.page.trigger('add-module', mModule);
 		}
 	});
 	

@@ -8,7 +8,7 @@ View.Page = Backbone.View.extend({
 		this.columns = new Collection.Columns();
 		this.modules = this.parent.modules.getPageModules(this.model.id);
 		
-		this.columns.bind('add', this.drawColumn, this);
+		this.bindListeners();
 	},
 	
 	alertMe: function() {
@@ -67,9 +67,15 @@ View.Page = Backbone.View.extend({
 			parent: this
 		})
 		.bindListeners()
-		.render();
-
-		column.data({'cid': mColumn.cid});
+		.render()
+		.data({'cid': mColumn.cid});
+		
+		if (mColumn.get('index') < 0) {
+			this.el.prepend(column);
+		}
+		else {
+			this.el.append(column);
+		}
 		
 		var _vModule, _el;
 
@@ -84,16 +90,7 @@ View.Page = Backbone.View.extend({
 
 			column.append(_el);
 			
-			_.defer(function() {
-				_el.fadeIn(APP.getAnimation(1000));
-			});
-		}
-		
-		if (mColumn.get('index') < 0) {
-			this.el.prepend(column);
-		}
-		else {
-			this.el.append(column);
+			_el.fadeIn(APP.getAnimation(1000));
 		}
 		
 		this.el.width(this.width += column.outerWidth(true));
@@ -125,10 +122,25 @@ View.Page = Backbone.View.extend({
 	drawModule: function(mModule) {
 		
 		var mColumn = this.columns.addColumn(-1);
+		
+		mModule.set({page: this.model.id});
 
 		this.drawColumn(mColumn, [mModule]);
 		
 		this.update();
+	},
+	
+	bindListeners: function() {
+		
+		this.columns.bind('add', this.drawColumn, this);
+		this.model.bind('add-module', this.drawModule, this);
+		this.model.bind('clear', this.clear, this);
+	},
+	
+	clear: function() {
+		
+		this.model.unbind('clear', this.clear);
+		this.model.unbind('add-module');
 	}
 });
 
@@ -187,19 +199,27 @@ View.Page_Tab = Backbone.View.extend({
 	className: 'page-tab',
 	
 	initialize: function() {
-		
+		this.model.bind('clear', this.removeClass, this);
 	},
 	
 	events: {
 		'click': 'loadPage'
 	},
+	
+	removeClass: function() {
+		this.el.removeClass('active');
+	},
 
 	loadPage: function() {
-		
+		this.el.addClass('active');
 		this.model.set({active: true});
 	},
 	
 	render: function() {
+		
+		if (this.model.get('active')) {
+			this.el.addClass('active');
+		}
 		
 		return this.el.fillTemplate('page-tab', this.model.toJSON());
 	}
