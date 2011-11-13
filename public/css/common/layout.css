@@ -1,3 +1,7 @@
+body {
+	font-family: "Georgia";
+}
+
 /* SOCNAMI */
 #socnami-header {
 	background: #ddd;
@@ -66,3 +70,64 @@
 		.page-tab.active {
 			background: #fff;
 			}
+			
+#socnami-cover {
+	background: #000;
+	bottom: 0;
+	display: none;
+	left: 0;
+	opacity: .8;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 100;
+	}
+	#socnami-cover h1 {
+		color: #FFFFFF;
+		font-size: 30px;
+		margin: auto;
+		padding: 100px 0 10px;
+		width: 340px;
+		}
+
+#login {
+	background: none repeat scroll 0 0 #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 auto;
+    padding: 20px;
+    width: 300px;
+	}
+	#login .login-input {
+		padding: 10px 0;
+		}
+		#login .login-input input{
+			float: right;
+			font-size: 14px;
+			height: 17px;
+			margin-top: -10px;
+			padding: 3px;
+			width: 200px;
+			}
+	#login.loading .login-input,
+	#login.loading #login-submit,
+	#login .msg-loading,
+	#login .msg-error {
+		display: none;
+		}
+	#login .msg-error {
+		color: #aa0000;
+		}
+	#login.loading .msg-loading,
+	#login.error .msg-error {
+		display: block;
+		font-size: 13px;
+		padding: 0px 3px 10px;
+		text-align: center;
+		}
+	#login-submit {
+		float: right;
+		margin-top: 10px;
+		}
+	#login h2 {
+		padding: 10px 0 20px 0;
+		}

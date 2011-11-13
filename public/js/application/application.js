@@ -1,5 +1,6 @@
 (function(win, $) {
-	
+
+//	var socket = io.connect();
 	var App = Backbone.View.extend({
 
 		el: 'body',
@@ -19,6 +20,8 @@
 			
 			// get module data
 			this.modules.fetch();
+			
+			console.log(this.modules)
 			
 			// common elements
 			this.elmts = {
@@ -92,7 +95,7 @@
 				console.log(_mPage)
 				
 				_mPage = this.pages.at(i);
-				_tab = new View.Page_Tab({ model: _mPage }).render();
+				_tab = new View.Page_Tab({model: _mPage}).render();
 				
 				this.elmts.footerPages.append(_tab);
 				
@@ -125,13 +128,13 @@
 		
 		bindListeners: function() {
 			
-			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
-			
 			this.menus.bind('add', this.drawMenu, this);
 			this.modules.bind('add', this.drawModule, this);
 			
 			this.pages.bind('add', this.changePage, this);
 			this.pages.bind('change:active', this.changePage, this);
+			
+			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
 		},
 		
 		changePage: function(mPage, value) {
@@ -158,7 +161,10 @@
 		}
 	});
 	
-	$(document).ready(function() {
+	function loadApp() {
+		
+		
+//		socket.on('connect', initStreamAuth);
 		
 		$.loadTemplates({
 			paths: [
@@ -166,9 +172,58 @@
 				'../templates/module.tmpl'
 			],
 			onload: function() {
+				$('#socnami-cover').hide();
 				win.APP = new App();
 				win.APP.render();
 			}
+		});
+	}
+	
+	function doAuth() {
+		
+		var form = $(this);
+		form.addClass('loading');
+		
+		$.post('/login', form.serialize(), function(data) {
+			
+			$('#login-password').val('');
+			
+			if (data && data.status) {
+				router.navigate('');
+				form.off('submit');
+			}
+			else {
+				form.toggleClass('error loading');
+			}
+		});
+		
+		return false;
+	}
+	
+	var router = new (Backbone.Router.extend({
+
+		routes: {
+			'login': 'showLogin',
+			'': 'loadApp'
+		},
+
+		showLogin: function() {
+			$('#socnami-cover').show();
+			$('#login')
+				.removeClass('loading')
+				.on('submit', doAuth);
+		},
+		
+		loadApp: function() {
+			loadApp();
+		}
+	}))();
+	
+	$(document).ready(function() {
+		
+		// start routing
+		Backbone.history.start({
+			pushState: true
 		});
 	});
 	
@@ -176,5 +231,6 @@
 	win.View = {};
 	win.Model = {};
 	win.Collection = {};
+	win.router = router;
 	
 })(window, jQuery);

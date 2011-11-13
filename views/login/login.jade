@@ -1,0 +1,9 @@
+form#login.clear(method='post', action='/')
+	h2='Login'
+	div.msg-error='Incorrect username or password'
+	div.msg-loading='loading...'
+	div.login-input.clear='User:'
+		input#login-username(name='username', type='text', value='')
+	div.login-input.clear='Password:'
+		input#login-password(name='password', type='password', value='')
+	input#login-submit(type='submit', value='Log In')
