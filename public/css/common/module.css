@@ -1,26 +1,19 @@
 .module {
-	border: 1px solid #000;
 	margin-bottom: 14px;
 	display: none;
 	}
 	.module-header {
-		background: #333;
 		color: #fff;
 		padding: 10px;
 		position: relative;
 		}
 		.module-close {
-			border-bottom: 1px solid #CCCCCC;
-			border-left: 1px solid #CCCCCC;
 			cursor: pointer;
 			float: right;
 			padding: 3px 7px;
 			position: absolute;
 			right: -1px;
 			top: -1px;
-			}
-		.module-close:hover {
-			color: #ff5555;
 			}
 	.module-body {
 		background: #fff;
@@ -31,7 +24,5 @@
 	}
 	
 .ui-sortable-placeholder {
-	background: #ccffcc;
-	border: 1px dashed #999;
 	margin-bottom: 14px
 }

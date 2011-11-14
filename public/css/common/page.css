@@ -10,3 +10,39 @@
     width: 300px;
 }
 
+#footer-pages {
+	border-left: 1px solid;
+	float: right;
+	margin-right: 15px;
+	}
+	.page-tab {
+		border-right: 1px solid;
+		border-top: 1px solid;
+		cursor: pointer;
+		float: left;
+		margin-top: -1px;
+		padding: 10px;
+		text-align: center;
+		width: 80px;
+		}
+		.page-tab .page-tab-menu {
+			background: #000;
+			border-radius: 5px 5px 0 0;
+			color: #FFFFFF;
+			display: none;
+			height: 20px;
+			margin-left: -10px;
+			padding: 0 2px;
+			position: absolute;
+			top: -20px;
+			width: 96px;
+			}
+		.page-tab .page-tab-menu span{
+			font-size: 9px;
+			padding: 0 5px;
+			}
+			
+	.page-tab.active {
+		border-top: 1px solid;
+		}
+

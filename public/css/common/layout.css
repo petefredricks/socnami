@@ -3,42 +3,58 @@ body {
 }
 
 /* SOCNAMI */
+#socnami {
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	right: 0;
+	top: 0;
+	}
+
 #socnami-header {
-	background: #ddd;
-	border-bottom: 1px solid #000;
 	height: 20px;
 	left: 0;
 	position: absolute;
 	right: 0;
 	top: 0;
 	z-index: 21;
-}
+	}
+	#header-panel {
+		border-bottom: 1px solid;
+		border-right: 1px solid;
+		border-radius: 0 0 50px 0;
+		bottom: 0;
+		height: 50px;
+		left: 0;
+		position: absolute;
+		right: 350px;
+		top: -30px;
+		}
 
 #socnami-wrapper {
 	bottom: 35px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 21px;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 20px;
 	z-index: 20;
-}
-
-#socnami-viewport {
-	bottom: 0;
-    left: 0;
-	overflow: auto;
-	padding: 10px 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
+	}
+	#socnami-viewport {
+		bottom: 0;
+		left: 0;
+		overflow: auto;
+		padding: 20px 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+		}
 
 #socnami-footer {
-	background: #ccc;
+	border-top: 1px solid;
 	bottom: 0;
 	height: 35px;
 	left: 0;
-	overflow: hidden;
 	position: absolute;
 	right: 0;
 	z-index: 21;
@@ -48,28 +64,12 @@ body {
 		width: 300px;
 		}
 	#footer-add-page{
-		background: #aaa;
+		border-left: 1px solid;
 		cursor: pointer;
 		float: right;
-		font-size: 30px;
-		padding: 4px 16px;
+		font-size: 20px;
+		padding: 7px 7px 10px;
 		}
-	#footer-pages {
-		border-left: 1px solid;
-		border-top: 1px solid;
-		float: right;
-		}
-		.page-tab {
-			background: #ddd;
-			border-right: 1px solid;
-			cursor: pointer;
-			float: left;
-			margin-top: -1px;
-			padding: 10px;	
-			}
-		.page-tab.active {
-			background: #fff;
-			}
 			
 #socnami-cover {
 	background: #000;

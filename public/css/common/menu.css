@@ -5,17 +5,17 @@
     z-index: 10;
 	}
 	.app-menu-handle {
-		background: none repeat scroll 0 0 #000000;
+		border-radius: 0 0 7px 7px;
 		bottom: -25px;
 		color: #FFFFFF;
 		cursor: pointer;
 		height: 25px;
 		position: absolute;
 		right: 0;
-		width: 70px;
+		width: 80px;
 		}
 		.app-menu-handle .handle-text {
-			padding-top: 7px;
+			padding-top: 5px;
 			text-align: center;
 			}
 	.app-menu-content {
@@ -26,12 +26,21 @@
 .launcher-list {
 	padding: 12px 0;
 	}
-	.launcher-item {
-		background: #ddd;
-		border: 1px solid #999999;
-		cursor: pointer;
-		margin: 5px 12px;
-		padding: 20px;
+.settings-list {
+	padding: 12px 0;
+	}
+.list-item {
+	background-color: #DDDDDD;
+	border: 1px solid #999999;
+	border-radius: 4px 4px 4px 4px;
+	cursor: pointer;
+	font-size: 14px;
+	margin: 6px 12px;
+	padding: 10px 20px;
+	}
+.list-item:hover {
+	background-color: #C6A573;
+	}
+	.list-item input {
+		float: right;
 		}
-	
-.ui-effects-transfer { border: 2px dotted gray; } 

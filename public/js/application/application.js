@@ -9,19 +9,18 @@
 
 		initialize: function () {
 			
-			this.rules = new Model.Definitions();
+			this.definitions = new Model.Definitions();
 			this.settings = new Model.Settings();
-			
-			this.isAnimated = this.settings.get('animate');
 			
 			this.pages = new Collection.Pages();
 			this.menus = new Collection.Menus();
 			this.modules = new Collection.Modules();
 			
-			// get module data
+			// get data
 			this.modules.fetch();
+			this.settings.fetch();
 			
-			console.log(this.modules)
+			this.isAnimated = this.settings.get('animate');
 			
 			// common elements
 			this.elmts = {
@@ -39,7 +38,18 @@
 		},
 		
 		createPage: function() {
-			this.pages.create();
+			
+			var name = prompt('New page:', 'New Page');
+			
+			var mPage = new Model.Page({
+				name: name
+			});
+			
+			var tab = new View.Page_Tab({model: mPage}).render();
+
+			this.elmts.footerPages.append(tab);
+			
+			this.pages.add(mPage);
 		},
 		
 		render: function() {
@@ -51,10 +61,13 @@
 		
 		renderMenus: function() {
 
-			var list = this.rules.menus;
+			var list = this.definitions.menus;
 			
-			for (var type in list) {
-				this.menus.add(list[type]);
+			for (var key in list) {
+				this.menus.add({
+					type: key,
+					text: list[key].text
+				});
 			}
 		},
 		
@@ -66,22 +79,44 @@
 				model: mMenu,
 				parent: this
 			};
-			var eMenu;
+			var vMenu;
 			
 			switch(type) {
 				case 'launcher':
-					mMenu.set({modules: this.rules.modules})
-					eMenu = new View.Launcher_Menu(data);
+					var modules = [];
+					
+					for (var mod in this.definitions.modules) {
+						modules.push({
+							type: mod,
+							title: this.definitions.modules[mod].title
+						})
+					}
+					
+					mMenu.set({ modules: modules });
+					vMenu = new View.Launcher_Menu(data);
 					break;
+					
 				case 'settings':
-					eMenu = new View.Settings_Menu(data);
+					var settings = [];
+					
+					for (var set in this.definitions.settings) {
+						settings.push({
+							type: set,
+							text: this.definitions.settings[set].text,
+							value: this.settings.get(set)
+						})
+					}
+					
+					mMenu.set({ settings: settings });
+					vMenu = new View.Settings_Menu(data);
 					break;
+					
 				case 'account':
-					eMenu = new View.Account_Menu(data);
+					vMenu = new View.Account_Menu(data);
 					break;
 			}
 			
-			this.elmts.wrapper.append(eMenu.render());
+			this.elmts.header.append(vMenu.render());
 		},
 		
 		renderPages: function() {
@@ -91,8 +126,6 @@
 			var _mPage, _tab;
 		
 			for (var i = 0; i < this.pages.length; i++) {
-				
-				console.log(_mPage)
 				
 				_mPage = this.pages.at(i);
 				_tab = new View.Page_Tab({model: _mPage}).render();
@@ -133,14 +166,18 @@
 			
 			this.pages.bind('add', this.changePage, this);
 			this.pages.bind('change:active', this.changePage, this);
+			this.pages.bind('remove', this.removePage, this);
 			
 			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
+		},
+		
+		removePage: function(mPage) {
+//			if 
 		},
 		
 		changePage: function(mPage, value) {
 			
 			if (value) {
-				
 				this.pages.setActive(mPage);
 				this.drawPage(mPage);
 			}
@@ -153,6 +190,15 @@
 			
 			this.modules.indexAndSave($('div.module'));
 			this.pages.saveAll();
+			this.settings.save();
+			
+			var data = {
+				modules: this.modules.toJSON(),
+				pages: this.pages.toJSON(),
+				settings: this.settings.toJSON()
+			}
+			
+			$.post('/save', data);
 		},
 		
 		drawModule: function(mModule) {
@@ -162,9 +208,6 @@
 	});
 	
 	function loadApp() {
-		
-		
-//		socket.on('connect', initStreamAuth);
 		
 		$.loadTemplates({
 			paths: [
@@ -189,7 +232,7 @@
 			$('#login-password').val('');
 			
 			if (data && data.status) {
-				router.navigate('');
+				router.navigate('', true);
 				form.off('submit');
 			}
 			else {
@@ -212,6 +255,7 @@
 			$('#login')
 				.removeClass('loading')
 				.on('submit', doAuth);
+			$('#login-username').focus();
 		},
 		
 		loadApp: function() {

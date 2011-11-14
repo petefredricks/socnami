@@ -38,7 +38,7 @@ app.configure(function() {
 	app.use(express.cookieParser());
 	app.use(express.session({
 		cookie: {
-			maxAge: 60000
+			maxAge: 60000 * 30
 		},
 		secret: 'flempeterson',
 		store: new mongoStore({db: db.connections[0].db})
@@ -124,6 +124,10 @@ app.post('/login', function(req, res) {
 			res.send(json.make('Invalid', 'error'));
 		}
 	});
+});
+
+app.post('/save', function(req, res) {
+	console.log(req.body)
 });
 
 app.listen(80);

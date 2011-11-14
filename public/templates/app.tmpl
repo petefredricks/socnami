@@ -1,10 +1,14 @@
 <!-- #template name="footer" -->
-<div id="footer-add-page">&plus;</div>
 <div id="footer-pages"></div>
+<div id="footer-add-page">&plus;</div>
 <h1>SOCNAMI</h1>
 
 <!-- #template name="page-tab" -->
-<div><%= data.name %></div>
+<div class="page-tab-menu">
+	<span class="page-rename">Rename</span>
+	<span class="page-delete">Delete</span>
+</div>
+<div class="page-name"><%= data.name %></div>
 
 <!-- #template name="app-menu" -->
 <div class="app-menu-content"></div>
@@ -14,20 +18,22 @@
 
 <!-- #template name="app-menu-launcher" -->
 <div class="launcher-list">
-	<% 
-	for (var module in data) { 
-		printTemplate('launcher-item', data[module]);
-	};
-	%>
+	<% printTemplate('launcher-item', data.modules); %>
 </div>
 
 <!-- #template name="launcher-item" -->
-<div class="launcher-item" data-type="<%= data.type %>">
+<div class="list-item" data-type="<%= data.type %>">
 	<%= data.title %>
 </div>
 
 <!-- #template name="app-menu-settings" -->
-<div class="launcher-list">
+<div class="settings-list">
+	<% printTemplate('settings-item', data.settings); %>
+</div>
+
+<!-- #template name="settings-item" -->
+<div class="list-item" data-type="<%= data.type %>">
+	<%= data.text %> <input <% if (data.value) { print('checked="checked"') }; %> type="checkbox" />
 </div>
 
 <!-- #template name="app-menu-account" -->
