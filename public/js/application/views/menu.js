@@ -11,7 +11,7 @@ View.Menu = Backbone.View.extend({
 	
 	events: {
 		'click div.app-menu-handle': 'toggle',
-		//'mouseleave': 'startClose',
+		'mouseleave': 'startClose',
 		'mouseenter': 'clearTimer'
 	},
 	
@@ -48,7 +48,7 @@ View.Menu = Backbone.View.extend({
 	position: function() {
 		
 		this.height = UTIL.getHeight(this.el);
-		this.offset = 40 + (this.model.collection.length - 1) * 80;
+		this.offset = 40 + (this.model.collection.length - 1) * 90;
 		this.index = 20 - this.model.collection.length;
 		
 		this.el.css({
@@ -112,14 +112,14 @@ View.Menu = Backbone.View.extend({
 				break;
 		}
 
-		var prom = this.el.animate({ top: top }, 500).promise();
+		var prom = this.el.animate({ top: top }, APP.getAnimation(500)).promise();
 		
 		function changeHandle() {
 			this.status = newStatus;
-			this.elmts.handleText.hide(200, function() {
+			this.elmts.handleText.hide(APP.getAnimation(100), function() {
 				$(this)
 					.text(newText)
-					.show(200);
+					.show(APP.getAnimation(100));
 			});
 		}
 		
@@ -137,11 +137,11 @@ View.Menu = Backbone.View.extend({
 View.Launcher_Menu = View.Menu.extend({
 	
 	extendedEvents: {
-		'click div.launcher-item': 'addModule'
+		'click div.list-item': 'addModule'
 	},
 	
 	draw: function() {
-		this.elmts.content.fillTemplate('app-menu-launcher', this.model.get('modules'));
+		this.elmts.content.fillTemplate('app-menu-launcher', { modules: this.model.get('modules') });
 	},
 	
 	addModule: function(ev) {
@@ -159,4 +159,13 @@ View.Account_Menu = View.Menu.extend({
 });
 
 View.Settings_Menu = View.Menu.extend({
+	
+	extendedEvents: {
+//		'click div.setting-item': 'addModule'
+	},
+	
+	draw: function() {
+		console.log(this.model.get('settings'))
+		this.elmts.content.fillTemplate('app-menu-settings', { settings: this.model.get('settings') });
+	}
 });

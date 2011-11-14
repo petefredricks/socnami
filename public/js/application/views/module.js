@@ -5,7 +5,7 @@ View.Module = Backbone.View.extend({
 	initialize: function() {
 		
 		this.data = this.model.toJSON();
-		this.data.title = APP.rules.modules[this.data.type].title;
+		this.data.title = APP.definitions.modules[this.data.type].title;
 	},
 	
 	// The DOM events specific to an item.

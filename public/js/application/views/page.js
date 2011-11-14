@@ -197,13 +197,40 @@ View.Column = Backbone.View.extend({
 View.Page_Tab = Backbone.View.extend({
 	
 	className: 'page-tab',
+	timer: null,
 	
 	initialize: function() {
 		this.model.bind('clear', this.removeClass, this);
+		this.model.bind('remove', this.remove, this);
+		this.model.bind('change:name', this.changeName, this);
 	},
 	
 	events: {
-		'click': 'loadPage'
+		'click': 'loadPage',
+		'click .page-rename': 'rename',
+		'click .page-delete': 'del',
+		'mouseenter': 'menuTrigger',
+		'mouseleave': 'menuClose'
+	},
+	
+	menuTrigger: function() {
+		
+		var self = this;
+		clearTimeout(this.timer);
+		
+		this.timer = setTimeout(function() {
+			self.el.find('.page-tab-menu').show();
+		}, 500);
+	},
+	
+	menuClose: function() {
+		
+		var self = this;
+		clearTimeout(this.timer);
+		
+		this.timer = setTimeout(function() {
+			self.el.find('.page-tab-menu').hide();
+		}, 500);
 	},
 	
 	removeClass: function() {
@@ -222,5 +249,26 @@ View.Page_Tab = Backbone.View.extend({
 		}
 		
 		return this.el.fillTemplate('page-tab', this.model.toJSON());
+	},
+	
+	rename: function() {
+		var name = prompt('New page name:', this.model.get('name'));
+		
+		if (name) {
+			this.model.set({'name': name});
+		}
+	},
+	
+	changeName: function() {
+		this.el.find('div.page-name').text(this.model.get('name'));
+	},
+	
+	del: function() {
+		
+		var status = confirm('Are you sure you want to delete page: ' + this.model.get('name') + '?');
+		
+		if (status) {
+			this.model.destroy();
+		}
 	}
 });
