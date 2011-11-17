@@ -14,8 +14,8 @@ Model.Definitions = Backbone.Model.extend({
 		'launcher': { text: 'New' }
 	},
 	settings: {
-		'animate': { text: 'Show animation'},
-		'other': { text: 'Some other setting'},
-		'theme': { text: 'Change theme'}
+		'animate': { text: 'Show animation', input: 'checkbox' },
+		'other': { text: 'Some other setting', input: 'checkbox' },
+		'theme': { text: 'Change theme', input: 'menu', options: ['darkbeach', 'wave'] }
 	}
 });

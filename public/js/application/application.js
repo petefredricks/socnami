@@ -20,8 +20,6 @@
 			this.modules.fetch();
 			this.settings.fetch();
 			
-			this.isAnimated = this.settings.get('animate');
-			
 			// common elements
 			this.elmts = {
 				'header': $('#socnami-header'),
@@ -41,15 +39,18 @@
 			
 			var name = prompt('New page:', 'New Page');
 			
-			var mPage = new Model.Page({
-				name: name
-			});
+			if (name) {
 			
-			var tab = new View.Page_Tab({model: mPage}).render();
+				var mPage = new Model.Page({
+					name: name
+				});
 
-			this.elmts.footerPages.append(tab);
-			
-			this.pages.add(mPage);
+				var tab = new View.Page_Tab({model: mPage}).render();
+
+				this.elmts.footerPages.append(tab);
+
+				this.pages.add(mPage);
+			}
 		},
 		
 		render: function() {
@@ -102,9 +103,9 @@
 					for (var set in this.definitions.settings) {
 						settings.push({
 							type: set,
-							text: this.definitions.settings[set].text,
+							definition: this.definitions.settings[set],
 							value: this.settings.get(set)
-						})
+						});
 					}
 					
 					mMenu.set({ settings: settings });
@@ -156,7 +157,7 @@
 		},
 		
 		getAnimation: function(speed) {
-			return this.isAnimated ? speed : 0;
+			return this.settings.get('animate') ? speed : 0;
 		},
 		
 		bindListeners: function() {

@@ -1,11 +1,11 @@
 .darkbeach #socnami-wrapper,
-.darkbeach #socnami-header, 
-.darkbeach .page-tab.active { background-color: #434346; border-color: #434346; color: #eee; }
+.darkbeach .page-tab.active,
+.darkbeach { background-color: #434346; border-color: #434346; color: #eee; }
 
 .darkbeach #header-panel, 
 .darkbeach #socnami-footer { background-color: #8E998F; border-color: #444; }
 
-.darkbeach .app-menu,
+.darkbeach .app-menu-content,
 .darkbeach .app-menu-handle { background-color: #eee; color: #333; }
 
 .darkbeach #footer-pages,

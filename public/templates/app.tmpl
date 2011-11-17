@@ -32,8 +32,27 @@
 </div>
 
 <!-- #template name="settings-item" -->
-<div class="list-item" data-type="<%= data.type %>">
-	<%= data.text %> <input <% if (data.value) { print('checked="checked"') }; %> type="checkbox" />
+<div class="list-item" data-type="<%= data.type %>" data-input="<%= data.definition.input %>">
+	<%
+	print(data.definition.text);
+	
+	switch(data.definition.input) {
+		case 'checkbox': 
+			p.push('<input', ((data.value) ? ' checked="checked"' : ''), ' type="checkbox" />');
+			break;
+			
+		case 'menu':
+			p.push('<select>');
+			
+			for (var n = 0; n < data.definition.options.length; n++) {
+				p.push('<option', ((data.value == data.definition.options[n]) ? ' selected="selected">' : '>'), data.definition.options[n], '</option>');
+			}
+			break;
+			
+			p.push('</select>');
+	}
+	
+	%> 
 </div>
 
 <!-- #template name="app-menu-account" -->

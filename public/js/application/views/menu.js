@@ -1,6 +1,6 @@
 View.Menu = Backbone.View.extend({
 
-	className: 'app-menu',
+	className: 'app-menu closed',
 	
 	timer: null,
 	status: 'close',
@@ -11,7 +11,7 @@ View.Menu = Backbone.View.extend({
 	
 	events: {
 		'click div.app-menu-handle': 'toggle',
-		'mouseleave': 'startClose',
+		//'mouseleave': 'startClose',
 		'mouseenter': 'clearTimer'
 	},
 	
@@ -111,19 +111,21 @@ View.Menu = Backbone.View.extend({
 				top = 0;
 				break;
 		}
-
-		var prom = this.el.animate({ top: top }, APP.getAnimation(500)).promise();
 		
 		function changeHandle() {
 			this.status = newStatus;
-			this.elmts.handleText.hide(APP.getAnimation(100), function() {
+			
+			this.el.toggleClass('closed', (this.status == 'close'));
+			
+			this.elmts.handleText.fadeOut(APP.getAnimation(100), function() {
+				
 				$(this)
 					.text(newText)
-					.show(APP.getAnimation(100));
+					.fadeIn(APP.getAnimation(300));
 			});
 		}
-		
-		prom.done($.proxy(changeHandle, this));
+
+		this.el.animate({ top: top }, APP.getAnimation(500), $.proxy(changeHandle, this));
 	},
 	
 	bindListeners: function() {
@@ -161,11 +163,35 @@ View.Account_Menu = View.Menu.extend({
 View.Settings_Menu = View.Menu.extend({
 	
 	extendedEvents: {
-//		'click div.setting-item': 'addModule'
+		'click div.list-item': 'toggleSetting'
 	},
 	
 	draw: function() {
-		console.log(this.model.get('settings'))
 		this.elmts.content.fillTemplate('app-menu-settings', { settings: this.model.get('settings') });
+	},
+	
+	toggleSetting: function(ev) {
+		
+		var row = $(ev.currentTarget);
+		var input, value, attr = {};
+		
+		switch(row.data('input')) {
+			
+			case 'checkbox':
+				input = row.find('input');
+				value = !input.prop('checked');
+				
+				input.prop('checked', value);
+				
+				attr[row.data('type')] = value;
+				
+				APP.settings.set(attr);
+				break;
+				
+			case 'menu':
+				break;
+		}
+		
+		return false;
 	}
 });
