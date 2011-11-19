@@ -1,4 +1,26 @@
 // Page Models
+
+Model.Page = Backbone.Model.extend({
+	
+	initialize: function() {
+		this.modules = APP.modules.getPageModules(this.id);
+		this.columns = new Collection.Columns();
+	},
+	
+	defaults: {
+		name: 'New Page',
+		active: true
+	},
+	
+	deletePage: function() {
+		_.each(this.modules, function(mModule) {
+			mModule.destroy();
+		});
+		
+		this.destroy();
+	}
+});
+
 Collection.Pages = Backbone.Collection.extend({
 	
 	model: Model.Page,
@@ -23,10 +45,12 @@ Collection.Pages = Backbone.Collection.extend({
 	}
 });
 
-Model.Page = Backbone.Model.extend({
-	defaults: {
-		name: 'New Page',
-		active: true
+Model.Column = Backbone.Model.extend({
+	
+	defaults: function() {
+		return {
+			index: 99
+		};
 	}
 });
 
@@ -86,14 +110,5 @@ Collection.Columns = Backbone.Collection.extend({
 				index: index
 			});
 		}
-	}
-});
-
-Model.Column = Backbone.Model.extend({
-	
-	defaults: function() {
-		return {
-			index: 99
-		};
 	}
 });

@@ -93,6 +93,7 @@ body {
 #login {
 	background: none repeat scroll 0 0 #CCCCCC;
     border-radius: 5px 5px 5px 5px;
+	color: #333;
     margin: 0 auto;
     padding: 20px;
     width: 300px;

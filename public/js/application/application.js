@@ -28,7 +28,13 @@
 				'footer': $('#socnami-footer')
 			}
 			
-			this.bindListeners();
+			this.menus.bind('add', this.drawMenu, this);
+			this.modules.bind('add', this.drawModule, this);
+			
+			this.pages.bind('add', this.addPage, this);
+			this.pages.bind('change:active', this.changePage, this);
+			
+			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
 		},
 		
 		events: {
@@ -40,17 +46,17 @@
 			var name = prompt('New page:', 'New Page');
 			
 			if (name) {
-			
-				var mPage = new Model.Page({
-					name: name
-				});
-
-				var tab = new View.Page_Tab({model: mPage}).render();
-
-				this.elmts.footerPages.append(tab);
-
-				this.pages.add(mPage);
+				this.pages.add({ name: name });
 			}
+		},
+		
+		addPage: function(mPage) {
+			
+			var tab = new View.Page_Tab({model: mPage}).render();
+
+			this.elmts.footerPages.append(tab);
+
+			this.changePage(mPage, true);
 		},
 		
 		render: function() {
@@ -160,25 +166,10 @@
 			return this.settings.get('animate') ? speed : 0;
 		},
 		
-		bindListeners: function() {
+		changePage: function(mPage, isActive) {
 			
-			this.menus.bind('add', this.drawMenu, this);
-			this.modules.bind('add', this.drawModule, this);
-			
-			this.pages.bind('add', this.changePage, this);
-			this.pages.bind('change:active', this.changePage, this);
-			this.pages.bind('remove', this.removePage, this);
-			
-			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
-		},
-		
-		removePage: function(mPage) {
-//			if 
-		},
-		
-		changePage: function(mPage, value) {
-			
-			if (value) {
+			if (isActive) {
+				mPage.initialize();
 				this.pages.setActive(mPage);
 				this.drawPage(mPage);
 			}
@@ -189,7 +180,7 @@
 		
 		syncToStorage: function() {
 			
-			this.modules.indexAndSave($('div.module'));
+			this.modules.indexAndSave();
 			this.pages.saveAll();
 			this.settings.save();
 			
@@ -204,7 +195,7 @@
 		
 		drawModule: function(mModule) {
 
-			this.page.trigger('add-module', mModule);
+			this.page.trigger('draw-module', mModule);
 		}
 	});
 	

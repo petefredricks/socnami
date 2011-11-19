@@ -11,7 +11,7 @@ View.Menu = Backbone.View.extend({
 	
 	events: {
 		'click div.app-menu-handle': 'toggle',
-		//'mouseleave': 'startClose',
+		'mouseleave': 'startClose',
 		'mouseenter': 'clearTimer'
 	},
 	

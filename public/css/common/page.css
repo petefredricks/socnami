@@ -21,9 +21,9 @@
 		cursor: pointer;
 		float: left;
 		margin-top: -1px;
-		padding: 10px;
+		padding: 10px 0;
 		text-align: center;
-		width: 80px;
+		width: 100px;
 		}
 		.page-tab .page-tab-menu {
 			background: #000;
@@ -31,7 +31,6 @@
 			color: #FFFFFF;
 			display: none;
 			height: 20px;
-			margin-left: -10px;
 			padding: 0 2px;
 			position: absolute;
 			top: -20px;

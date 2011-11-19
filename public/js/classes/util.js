@@ -124,12 +124,12 @@
 		oppositeDay: function oppositeDay(value) {
 
 			switch(value) {
-				case 'left':return 'right';
-				case 'right':return 'left';
-				case 'top':return 'bottom';
-				case 'bottom':return 'top';
-				case 'open':return 'close';
-				case 'close':return 'open';
+				case 'left':	return 'right';
+				case 'right':	return 'left';
+				case 'top':		return 'bottom';
+				case 'bottom':	return 'top';
+				case 'open':	return 'close';
+				case 'close':	return 'open';
 			}
 
 			if (typeof(value) == 'number') {

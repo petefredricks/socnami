@@ -5,30 +5,21 @@ View.Page = Backbone.View.extend({
 	
 	initialize: function() {
 		
-		this.columns = new Collection.Columns();
-		this.modules = this.parent.modules.getPageModules(this.model.id);
-		
-		this.bindListeners();
-	},
-	
-	alertMe: function() {
-		alert('winning');
+		this.model.columns.bind('add', this.drawColumn, this);
+		this.model.bind('draw-module', this.drawModule, this);
 	},
 	
 	render: function() {
-		
-		var mModule, mColumn, columnIndex;
+
 		var columnListMap = {};
 		var floatList = [];
 		
-		for (var i = 0, _len = this.modules.length; i < _len; i++) {
+		_.each(this.model.modules, function(mModule) {
 			
-			mModule = this.modules[i];
-			
-			columnIndex = mModule.get('col');
+			var columnIndex = mModule.get('col');
 			
 			if (!isNaN(columnIndex)) {
-				mColumn = this.columns.addColumn(columnIndex);
+				var mColumn = this.model.columns.addColumn(columnIndex);
 				
 				if (!columnListMap[mColumn.cid]) {
 					columnListMap[mColumn.cid] = [];
@@ -39,12 +30,12 @@ View.Page = Backbone.View.extend({
 			else {
 				floatList.push(mModule);
 			}
-		}
+		}, this);
 		
 		// add a last column
-		mColumn = this.columns.addColumn(99);
+		this.model.columns.addColumn(99);
 		
-		this.columns.each(function(mColumn) {
+		this.model.columns.each(function(mColumn) {
 			
 			var id = mColumn.cid;
 			var mModules = columnListMap[id];
@@ -109,38 +100,25 @@ View.Page = Backbone.View.extend({
 			_modules = _column.find('div.module');
 			_count = _modules.length;
 			
-			this.columns.updateColumn(_cid, _count, i);
+			this.model.columns.updateColumn(_cid, _count, i);
 			
 			for (var k = 0; k < _count; k++) {
 				$(_modules[k]).data('col', i);
 			}
 		}
 		
-		this.columns.checkColumns();
+		this.model.columns.checkColumns();
 	},
 		
 	drawModule: function(mModule) {
 		
-		var mColumn = this.columns.addColumn(-1);
+		var mColumn = this.model.columns.addColumn(-1);
 		
 		mModule.set({page: this.model.id});
 
 		this.drawColumn(mColumn, [mModule]);
 		
 		this.update();
-	},
-	
-	bindListeners: function() {
-		
-		this.columns.bind('add', this.drawColumn, this);
-		this.model.bind('add-module', this.drawModule, this);
-		this.model.bind('clear', this.clear, this);
-	},
-	
-	clear: function() {
-		
-		this.model.unbind('clear', this.clear);
-		this.model.unbind('add-module');
 	}
 });
 
@@ -198,48 +176,65 @@ View.Page_Tab = Backbone.View.extend({
 	
 	className: 'page-tab',
 	timer: null,
+	status: 'close',
 	
 	initialize: function() {
 		this.model.bind('clear', this.removeClass, this);
-		this.model.bind('remove', this.remove, this);
+		this.model.bind('destroy', this.remove, this);
 		this.model.bind('change:name', this.changeName, this);
 	},
 	
 	events: {
+		'mouseenter': 'menuOpen',
+		'mouseleave': 'menuClose',
 		'click': 'loadPage',
 		'click .page-rename': 'rename',
-		'click .page-delete': 'del',
-		'mouseenter': 'menuTrigger',
-		'mouseleave': 'menuClose'
+		'click .page-delete': 'deletePage'
 	},
 	
-	menuTrigger: function() {
+	toggle: function(status) {
 		
-		var self = this;
 		clearTimeout(this.timer);
 		
-		this.timer = setTimeout(function() {
-			self.el.find('.page-tab-menu').show();
-		}, 500);
+		if (status == this.status) {
+			return;
+		}
+		
+		var newStatus, delay, mode;
+		
+		switch (status) {
+
+			case 'close':
+				newStatus = 'close';
+				delay = 200;
+				mode = 'hide';
+				break;
+
+			case 'open':
+				newStatus = 'open';
+				delay = 1000;
+				mode = 'show';
+				break;
+		}
+		
+		var effect = $.proxy(function() {
+			this.el.find('.page-tab-menu').effect('slide', {direction: 'down', mode: mode}, 200);
+			this.status = newStatus;
+		}, this);
+		
+		this.timer = setTimeout(effect, delay);
 	},
 	
-	menuClose: function() {
-		
-		var self = this;
-		clearTimeout(this.timer);
-		
-		this.timer = setTimeout(function() {
-			self.el.find('.page-tab-menu').hide();
-		}, 500);
+	menuOpen: function() {
+		this.toggle('open');
+	},
+	
+	menuClose: function() {	
+		this.toggle('close');
 	},
 	
 	removeClass: function() {
 		this.el.removeClass('active');
-	},
-
-	loadPage: function() {
-		this.el.addClass('active');
-		this.model.set({active: true});
 	},
 	
 	render: function() {
@@ -263,12 +258,20 @@ View.Page_Tab = Backbone.View.extend({
 		this.el.find('div.page-name').text(this.model.get('name'));
 	},
 	
-	del: function() {
+	loadPage: function() {
+		
+		APP.modules.indexAndSave();
+		
+		this.el.addClass('active');
+		this.model.set({active: true});
+	},
+	
+	deletePage: function() {
 		
 		var status = confirm('Are you sure you want to delete page: ' + this.model.get('name') + '?');
 		
 		if (status) {
-			this.model.destroy();
+			this.model.deletePage();
 		}
 	}
 });

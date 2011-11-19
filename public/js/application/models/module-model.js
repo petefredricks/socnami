@@ -14,8 +14,9 @@ Collection.Modules = Backbone.Collection.extend({
 		});
 	},
 	
-	indexAndSave: function(modules) {
+	indexAndSave: function() {
 		
+		var modules = $('div.module');
 		var _cid, _module, _col, _attr, _pos;
 
 		for (var i = 0; i < modules.length; i++) {
