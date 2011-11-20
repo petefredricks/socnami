@@ -68,22 +68,30 @@ View.Page = Backbone.View.extend({
 			this.el.append(column);
 		}
 		
-		var _vModule, _el;
+		var vModule, el;
 
 		for (var i = 0; i < count; i++) {
 
-			_vModule = new View.Module({
+			vModule = new View.Module({
 				model: mModules[i],
 				parent: this
 			});
 			
-			_el = _vModule.render()
+			el = vModule.render()
 
-			column.append(_el);
+			column.append(el);
 			
-			_el.fadeIn(APP.getAnimation(1000));
+			_.defer(function() {
+				el.fadeIn(APP.getAnimation(500));
+			});
 		}
 		
+		var resize = _.bind(this.resize, this, column);
+		
+		_.defer(resize);
+	},
+	
+	resize: function(column) {
 		this.el.width(this.width += column.outerWidth(true));
 	},
 	
@@ -179,9 +187,9 @@ View.Page_Tab = Backbone.View.extend({
 	status: 'close',
 	
 	initialize: function() {
-		this.model.bind('clear', this.removeClass, this);
 		this.model.bind('destroy', this.remove, this);
 		this.model.bind('change:name', this.changeName, this);
+		this.model.bind('change:active', this.changeStatus, this);
 	},
 	
 	events: {
@@ -233,10 +241,6 @@ View.Page_Tab = Backbone.View.extend({
 		this.toggle('close');
 	},
 	
-	removeClass: function() {
-		this.el.removeClass('active');
-	},
-	
 	render: function() {
 		
 		if (this.model.get('active')) {
@@ -254,16 +258,19 @@ View.Page_Tab = Backbone.View.extend({
 		}
 	},
 	
-	changeName: function() {
-		this.el.find('div.page-name').text(this.model.get('name'));
+	changeName: function(mPage) {
+		this.el.find('div.page-name').text(mPage.get('name'));
+	},
+	
+	changeStatus: function(mPage, isActive) {
+		this.el.toggleClass('active', isActive);
 	},
 	
 	loadPage: function() {
 		
 		APP.modules.indexAndSave();
 		
-		this.el.addClass('active');
-		this.model.set({active: true});
+		this.model.trigger('make-active', this.model);
 	},
 	
 	deletePage: function() {

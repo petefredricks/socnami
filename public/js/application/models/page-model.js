@@ -1,5 +1,4 @@
 // Page Models
-
 Model.Page = Backbone.Model.extend({
 	
 	initialize: function() {
@@ -7,17 +6,21 @@ Model.Page = Backbone.Model.extend({
 		this.columns = new Collection.Columns();
 	},
 	
-	defaults: {
-		name: 'New Page',
-		active: true
-	},
+//	defaults: function() {
+//		return {
+//			name: 'New Page',
+//			active: true,
+//			id: UTIL.newUID(10)
+//		}
+//	},
 	
 	deletePage: function() {
+		
 		_.each(this.modules, function(mModule) {
 			mModule.destroy();
 		});
 		
-		this.destroy();
+		this.destroy({silent: !this.get('active')});
 	}
 });
 
@@ -25,7 +28,13 @@ Collection.Pages = Backbone.Collection.extend({
 	
 	model: Model.Page,
 	
-	localStorage: new Store("pages"),
+	localStorage: new Store('pages'),
+	
+	initialize: function() {
+		this.bind('add', this.makeActive, this);
+		this.bind('remove', this.defaultActive, this);
+		this.bind('make-active', this.makeActive, this);
+	},
 	
 	saveAll: function() {
 		
@@ -34,7 +43,7 @@ Collection.Pages = Backbone.Collection.extend({
 		});
 	},
 	
-	setActive: function(mPage) {
+	disableOthers: function(mPage) {
 		
 		this.each(function(_mPage) {
 					
@@ -42,6 +51,26 @@ Collection.Pages = Backbone.Collection.extend({
 				_mPage.set({ active: false });
 			}
 		});
+	},
+
+	defaultActive: function() {
+		
+		var mPage = this.first();
+		
+		if (mPage) {
+			this.makeActive(mPage);
+		}
+	},
+		
+	makeActive: function(mPage) {
+		
+		console.log(mPage)
+
+		mPage.initialize();
+		mPage.set({ active: true });
+		
+		this.disableOthers(mPage);
+		this.trigger('draw', mPage);
 	}
 });
 

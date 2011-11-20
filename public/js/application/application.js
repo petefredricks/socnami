@@ -16,9 +16,9 @@
 			this.menus = new Collection.Menus();
 			this.modules = new Collection.Modules();
 			
-			// get data
-			this.modules.fetch();
-			this.settings.fetch();
+//			// get data
+//			this.modules.fetch();
+//			this.settings.fetch();
 			
 			// common elements
 			this.elmts = {
@@ -31,32 +31,14 @@
 			this.menus.bind('add', this.drawMenu, this);
 			this.modules.bind('add', this.drawModule, this);
 			
-			this.pages.bind('add', this.addPage, this);
-			this.pages.bind('change:active', this.changePage, this);
+			this.pages.bind('add', this.addTab, this);
+			this.pages.bind('draw', this.drawPage, this);
 			
 			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
 		},
 		
 		events: {
 			'click #footer-add-page': 'createPage'
-		},
-		
-		createPage: function() {
-			
-			var name = prompt('New page:', 'New Page');
-			
-			if (name) {
-				this.pages.add({ name: name });
-			}
-		},
-		
-		addPage: function(mPage) {
-			
-			var tab = new View.Page_Tab({model: mPage}).render();
-
-			this.elmts.footerPages.append(tab);
-
-			this.changePage(mPage, true);
 		},
 		
 		render: function() {
@@ -75,6 +57,24 @@
 					type: key,
 					text: list[key].text
 				});
+			}
+		},
+		
+		renderPages: function() {
+			
+			this.pages.fetch();
+			
+			var _mPage;
+		
+			for (var i = 0; i < this.pages.length; i++) {
+				
+				_mPage = this.pages.at(i);
+				
+				this.addTab(_mPage);
+				
+				if (_mPage.get('active')) {
+					this.drawPage(_mPage);
+				}
 			}
 		},
 		
@@ -126,25 +126,6 @@
 			this.elmts.header.append(vMenu.render());
 		},
 		
-		renderPages: function() {
-			
-			this.pages.fetch();
-			
-			var _mPage, _tab;
-		
-			for (var i = 0; i < this.pages.length; i++) {
-				
-				_mPage = this.pages.at(i);
-				_tab = new View.Page_Tab({model: _mPage}).render();
-				
-				this.elmts.footerPages.append(_tab);
-				
-				if (_mPage.get('active')) {
-					this.drawPage(_mPage);
-				}
-			}
-		},
-		
 		drawPage: function(mPage) {
 			
 			this.page = mPage;
@@ -166,16 +147,20 @@
 			return this.settings.get('animate') ? speed : 0;
 		},
 		
-		changePage: function(mPage, isActive) {
+		createPage: function() {
 			
-			if (isActive) {
-				mPage.initialize();
-				this.pages.setActive(mPage);
-				this.drawPage(mPage);
+			var name = prompt('New page:', 'New Page');
+			
+			if (name) {
+				this.pages.add({ name: name });
 			}
-			else {
-				mPage.trigger('clear');
-			}
+		},
+		
+		addTab: function(mPage) {
+
+			var tab = new View.Page_Tab({model: mPage}).render();
+
+			this.elmts.footerPages.append(tab);
 		},
 		
 		syncToStorage: function() {
