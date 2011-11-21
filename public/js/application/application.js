@@ -16,9 +16,9 @@
 			this.menus = new Collection.Menus();
 			this.modules = new Collection.Modules();
 			
-//			// get data
-//			this.modules.fetch();
-//			this.settings.fetch();
+			// get data
+			this.modules.fetch();
+			this.settings.fetch();
 			
 			// common elements
 			this.elmts = {
@@ -29,7 +29,7 @@
 			}
 			
 			this.menus.bind('add', this.drawMenu, this);
-			this.modules.bind('add', this.drawModule, this);
+			this.modules.bind('add', this.addModule, this);
 			
 			this.pages.bind('add', this.addTab, this);
 			this.pages.bind('draw', this.drawPage, this);
@@ -39,6 +39,10 @@
 		
 		events: {
 			'click #footer-add-page': 'createPage'
+		},
+		
+		getAnimation: function(speed) {
+			return this.settings.get('animate') ? speed : 0;
 		},
 		
 		render: function() {
@@ -143,10 +147,6 @@
 			this.elmts.footerPages = $('#footer-pages');
 		},
 		
-		getAnimation: function(speed) {
-			return this.settings.get('animate') ? speed : 0;
-		},
-		
 		createPage: function() {
 			
 			var name = prompt('New page:', 'New Page');
@@ -158,9 +158,14 @@
 		
 		addTab: function(mPage) {
 
-			var tab = new View.Page_Tab({model: mPage}).render();
+			var tab = new View.Page_Tab({ model: mPage }).render();
 
 			this.elmts.footerPages.append(tab);
+		},
+		
+		addModule: function(mModule) {
+
+			this.page.addModule(mModule);
 		},
 		
 		syncToStorage: function() {
@@ -176,11 +181,6 @@
 			}
 			
 			$.post('/save', data);
-		},
-		
-		drawModule: function(mModule) {
-
-			this.page.trigger('draw-module', mModule);
 		}
 	});
 	

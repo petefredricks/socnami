@@ -10,39 +10,8 @@ View.Page = Backbone.View.extend({
 	},
 	
 	render: function() {
-
-		var columnListMap = {};
-		var floatList = [];
 		
-		_.each(this.model.modules, function(mModule) {
-			
-			var columnIndex = mModule.get('col');
-			
-			if (!isNaN(columnIndex)) {
-				var mColumn = this.model.columns.addColumn(columnIndex);
-				
-				if (!columnListMap[mColumn.cid]) {
-					columnListMap[mColumn.cid] = [];
-				}
-				
-				columnListMap[mColumn.cid].push(mModule);
-			}
-			else {
-				floatList.push(mModule);
-			}
-		}, this);
-		
-		// add a last column
-		this.model.columns.addColumn(99);
-		
-		this.model.columns.each(function(mColumn) {
-			
-			var id = mColumn.cid;
-			var mModules = columnListMap[id];
-			
-			this.drawColumn(mColumn, mModules);
-		
-		}, this);
+		this.model.createModuleMap();
 		
 		return this.el;
 	},
@@ -53,13 +22,12 @@ View.Page = Backbone.View.extend({
 
 		mColumn.set({'count': count});
 
-		var column = new View.Column({
+		var vColumn = new View.Column({
 			model: mColumn,
 			parent: this
-		})
-		.bindListeners()
-		.render()
-		.data({'cid': mColumn.cid});
+		});
+		
+		var column = vColumn.render().data({ 'cid': mColumn.cid });
 		
 		if (mColumn.get('index') < 0) {
 			this.el.prepend(column);
@@ -77,13 +45,13 @@ View.Page = Backbone.View.extend({
 				parent: this
 			});
 			
-			el = vModule.render()
+			el = vModule.render().data({ 'col': mColumn.get('index') });
 
 			column.append(el);
 			
-			_.defer(function() {
+			_.defer(function(el) {
 				el.fadeIn(APP.getAnimation(500));
-			});
+			}, el);
 		}
 		
 		var resize = _.bind(this.resize, this, column);
@@ -93,40 +61,6 @@ View.Page = Backbone.View.extend({
 	
 	resize: function(column) {
 		this.el.width(this.width += column.outerWidth(true));
-	},
-	
-	update: function() {
-		
-		var columns = this.el.find('div.column');
-		
-		var _cid, _modules, _column, _count;
-		
-		for (var i = 0; i < columns.length; i++) {
-			
-			_column = $(columns[i]);
-			_cid = _column.data('cid');
-			_modules = _column.find('div.module');
-			_count = _modules.length;
-			
-			this.model.columns.updateColumn(_cid, _count, i);
-			
-			for (var k = 0; k < _count; k++) {
-				$(_modules[k]).data('col', i);
-			}
-		}
-		
-		this.model.columns.checkColumns();
-	},
-		
-	drawModule: function(mModule) {
-		
-		var mColumn = this.model.columns.addColumn(-1);
-		
-		mModule.set({page: this.model.id});
-
-		this.drawColumn(mColumn, [mModule]);
-		
-		this.update();
 	}
 });
 
@@ -154,6 +88,9 @@ View.Column = Backbone.View.extend({
 	},
 	
 	render: function() {
+		
+		this.bindListeners();
+		
 		return this.el;
 	},
 	
@@ -172,7 +109,7 @@ View.Column = Backbone.View.extend({
 			handle: 'div.module-header',
 			tolerance: "pointer",
 			stop: function() {
-				self.parent.update();
+				self.parent.model.update();
 			}
 		});
 		

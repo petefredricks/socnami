@@ -1,3 +1,9 @@
+Model.Module = Backbone.Model.extend({
+	defaults: function() {
+		id: UTIL.newUID(10)
+	}
+});
+
 Collection.Modules = Backbone.Collection.extend({
 	
 	model: Model.Module,
@@ -23,7 +29,7 @@ Collection.Modules = Backbone.Collection.extend({
 			_module = $(modules[i])
 			_cid = _module.data('cid');
 			_col = _module.data('col');
-			_attr = {index: i};
+			_attr = { index: i };
 			
 			if (isNaN(_col)) {
 				_pos = _module.position();
@@ -40,9 +46,4 @@ Collection.Modules = Backbone.Collection.extend({
 			mModule.save();
 		}
 	}
-});
-
-
-Model.Module = Backbone.Model.extend({
-	
 });

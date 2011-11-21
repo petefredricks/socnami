@@ -2,17 +2,17 @@
 Model.Page = Backbone.Model.extend({
 	
 	initialize: function() {
-		this.modules = APP.modules.getPageModules(this.id);
+		this.modules = APP.modules.getPageModules(this.get('id'));
 		this.columns = new Collection.Columns();
 	},
 	
-//	defaults: function() {
-//		return {
-//			name: 'New Page',
-//			active: true,
-//			id: UTIL.newUID(10)
-//		}
-//	},
+	defaults: function() {
+		return {
+			name: 'New Page',
+			active: true,
+			id: UTIL.newUID(10)
+		}
+	},
 	
 	deletePage: function() {
 		
@@ -21,6 +21,76 @@ Model.Page = Backbone.Model.extend({
 		});
 		
 		this.destroy({silent: !this.get('active')});
+	},
+	
+	update: function() {
+		
+		var columns = $('div.column');
+		
+		var _cid, _modules, _column, _count;
+		
+		for (var i = 0; i < columns.length; i++) {
+			
+			_column = $(columns[i]);
+			_cid = _column.data('cid');
+			_modules = _column.find('div.module');
+			_count = _modules.length;
+			
+			this.columns.updateColumn(_cid, _count, i);
+			
+			for (var k = 0; k < _count; k++) {
+				$(_modules[k]).data('col', i);
+			}
+		}
+		
+		this.columns.checkColumns();
+	},
+	
+	createModuleMap: function() {
+		
+		var columnListMap = {};
+		var floatList = [];
+		
+		_.each(this.modules, function(mModule) {
+			
+			var columnIndex = mModule.get('col');
+			
+			if (!isNaN(columnIndex)) {
+				var mColumn = this.columns.addColumn(columnIndex);
+				
+				if (!columnListMap[mColumn.cid]) {
+					columnListMap[mColumn.cid] = [];
+				}
+				
+				columnListMap[mColumn.cid].push(mModule);
+			}
+			else {
+				floatList.push(mModule);
+			}
+		}, this);
+		
+		// add a last column
+		this.columns.addColumn(99);
+		
+		this.columns.each(function(mColumn) {
+			
+			var id = mColumn.cid;
+			var mModules = columnListMap[id];
+			
+			this.trigger('add', mColumn, mModules);
+		
+		}, this.columns);
+	},
+		
+	addModule: function(mModule) {
+		
+		this.modules.push(mModule);
+		
+		mModule.set({ page: this.get('id') });
+
+		this.columns.trigger('add', this.columns.addColumn(-1), [mModule]);
+		
+		this.update();
 	}
 });
 
@@ -63,8 +133,6 @@ Collection.Pages = Backbone.Collection.extend({
 	},
 		
 	makeActive: function(mPage) {
-		
-		console.log(mPage)
 
 		mPage.initialize();
 		mPage.set({ active: true });

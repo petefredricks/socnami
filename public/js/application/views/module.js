@@ -17,7 +17,7 @@ View.Module = Backbone.View.extend({
 	deleteModule: function() {
 		
 		this.model.destroy();
-		this.parent.update();
+		this.parent.model.update();
 	},
 	
 	render: function() {
