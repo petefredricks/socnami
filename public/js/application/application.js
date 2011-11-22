@@ -22,10 +22,10 @@
 			
 			// common elements
 			this.elmts = {
-				'header': $('#socnami-header'),
-				'wrapper': $('#socnami-wrapper'),
+				'header':	$('#socnami-header'),
+				'wrapper':	$('#socnami-wrapper'),
 				'viewport': $('#socnami-viewport'),
-				'footer': $('#socnami-footer')
+				'panel':	$('#socnami-panel')
 			}
 			
 			this.menus.bind('add', this.drawMenu, this);
@@ -38,7 +38,7 @@
 		},
 		
 		events: {
-			'click #footer-add-page': 'createPage'
+			'click #page-menu-add-page': 'createPage'
 		},
 		
 		getAnimation: function(speed) {
@@ -47,7 +47,7 @@
 		
 		render: function() {
 			
-			this.drawFooter();
+			this.drawPageMenu();
 			this.renderMenus();
 			this.renderPages();
 		},
@@ -142,9 +142,9 @@
 			this.elmts.viewport.html(vPage.render());
 		},
 		
-		drawFooter: function() {
-			this.elmts.footer.fillTemplate('footer');
-			this.elmts.footerPages = $('#footer-pages');
+		drawPageMenu: function() {
+			this.elmts.panel.fillTemplate('page-menu');
+			this.elmts.pageMenu = $('#page-menu');
 		},
 		
 		createPage: function() {
@@ -160,7 +160,7 @@
 
 			var tab = new View.Page_Tab({ model: mPage }).render();
 
-			this.elmts.footerPages.append(tab);
+			this.elmts.pageMenu.append(tab);
 		},
 		
 		addModule: function(mModule) {

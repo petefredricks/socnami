@@ -13,23 +13,26 @@ body {
 	}
 
 #socnami-header {
-	height: 20px;
+	height: 40px;
 	left: 0;
 	position: absolute;
 	right: 0;
 	top: 0;
 	z-index: 21;
 	}
-	#header-panel {
-		border-bottom: 1px solid;
-		border-right: 1px solid;
-		border-radius: 0 0 50px 0;
-		bottom: 0;
-		height: 50px;
+	#socnami-header h1 {
+		font-family: Helvetica,Arial,Tahoma,sans-serif;
+		font-size: 24px;
+		padding: 8px 15px;
+		}
+	#socnami-panel {
+		border-top: 1px solid;
+		height: 30px;
 		left: 0;
+		overflow: hidden;
 		position: absolute;
-		right: 350px;
-		top: -30px;
+		right: 0;
+		bottom: -30px;
 		}
 
 #socnami-wrapper {
@@ -37,38 +40,17 @@ body {
 	left: 0;
 	position: absolute;
 	right: 0;
-	top: 20px;
+	top: 70px;
 	z-index: 20;
 	}
 	#socnami-viewport {
 		bottom: 0;
 		left: 0;
 		overflow: auto;
-		padding: 20px 0;
+		padding: 10px 0;
 		position: absolute;
 		right: 0;
 		top: 0;
-		}
-
-#socnami-footer {
-	border-top: 1px solid;
-	bottom: 0;
-	height: 35px;
-	left: 0;
-	position: absolute;
-	right: 0;
-	z-index: 21;
-	}
-	#socnami-footer h1 {
-		padding: 10px;
-		width: 300px;
-		}
-	#footer-add-page{
-		border-left: 1px solid;
-		cursor: pointer;
-		float: right;
-		font-size: 20px;
-		padding: 7px 7px 10px;
 		}
 			
 #socnami-cover {

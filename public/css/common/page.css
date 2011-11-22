@@ -10,18 +10,25 @@
     width: 300px;
 }
 
-#footer-pages {
+#page-menu-add-page{
 	border-left: 1px solid;
+	cursor: pointer;
 	float: right;
-	margin-right: 15px;
+	font-size: 20px;
+	padding: 7px 7px 10px;
+	}
+
+#page-menu {
+	border-left: 1px solid;
+	float: left;
+	margin-left: 15px;
 	}
 	.page-tab {
 		border-right: 1px solid;
-		border-top: 1px solid;
 		cursor: pointer;
 		float: left;
-		margin-top: -1px;
-		padding: 10px 0;
+		font-size: 14px;
+		padding: 8px 0;
 		text-align: center;
 		width: 100px;
 		}
@@ -40,8 +47,3 @@
 			font-size: 9px;
 			padding: 4px 5px;
 			}
-			
-	.page-tab.active {
-		border-top: 1px solid;
-		}
-
