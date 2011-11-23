@@ -26,19 +26,19 @@ body {
 		padding: 12px 15px;
 		}
 	#socnami-panel {
+		border-bottom: 1px solid #202020;
 		border-top: 1px solid;
-		bottom: -28px;
-		height: 28px;
+		bottom: -30px;
 		left: 0;
 		position: absolute;
 		right: 0;
 		z-index: 5;
 		}
 	#socnami-screen {
-		bottom: -38px;
-		height: 10px;
+		bottom: -45px;
+		height: 15px;
 		left: 0;
-		opacity: .7;
+		opacity: 0.7;
 		position: absolute;
 		right: 0;
 		z-index: 4;
@@ -49,14 +49,14 @@ body {
 	left: 0;
 	position: absolute;
 	right: 0;
-	top: 78px;
+	top: 80px;
 	z-index: 20;
 	}
 	#socnami-viewport {
 		bottom: 0;
 		left: 0;
 		overflow: auto;
-		padding: 10px 0;
+		padding: 15px 0;
 		position: absolute;
 		right: 0;
 		top: 0;

@@ -18,14 +18,14 @@
 .darkbeach #page-menu .page-tab,
 .darkbeach .module-body { border-color: #444; color: #ccc; }
 
+.darkbeach .module-body { background-color: #202020 }
+
 .darkbeach .page-tab-menu { background: #202020; border-color: #444444; color: #FFFFFF; }
 
 .darkbeach #page-menu .page-tab.active { background-color: #7DC5D4; background-image: -moz-linear-gradient(center top , #EFEEE3, #EBF4F6 31%); color: #000; }
 
 .darkbeach #page-menu-add-page { background: #222222; border-color: #444444; color: #7DC5D4; }
 .darkbeach #page-menu-add-page:hover { color: #eee; }
-
-.darkbeach .module-header { background-color: #111 }
 
 .darkbeach .ui-sortable-placeholder { background: #ccc; border: 1px dashed #000; opacity: .5}
 
