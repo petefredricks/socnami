@@ -163,7 +163,7 @@ View.Page_Tab = Backbone.View.extend({
 		}
 		
 		var effect = $.proxy(function() {
-			this.el.find('.page-tab-menu').effect('slide', {direction: 'down', mode: mode}, 200);
+			this.el.find('.page-tab-menu').effect('slide', {direction: 'up', mode: mode}, 200);
 			this.status = newStatus;
 		}, this);
 		
@@ -204,6 +204,8 @@ View.Page_Tab = Backbone.View.extend({
 	},
 	
 	loadPage: function() {
+		
+		clearTimeout(this.timer);
 		
 		APP.modules.indexAndSave();
 		

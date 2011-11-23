@@ -118,6 +118,7 @@ View.Menu = Backbone.View.extend({
 			this.status = newStatus;
 			
 			this.el.toggleClass('closed', (this.status == 'close'));
+			this.el.toggleClass('open', (this.status == 'open'));
 			
 			this.elmts.handleText.fadeOut(APP.getAnimation(100), function() {
 				

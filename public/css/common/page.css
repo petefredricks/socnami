@@ -10,12 +10,13 @@
     width: 300px;
 }
 
-#page-menu-add-page{
-	border-left: 1px solid;
+#page-menu-add-page {
+	border-right: 1px solid;
 	cursor: pointer;
-	float: right;
-	font-size: 20px;
-	padding: 7px 7px 10px;
+	float: left;
+	font-size: 19px;
+	font-weight: bold;
+	padding: 4px 7px 5px;
 	}
 
 #page-menu {
@@ -28,20 +29,22 @@
 		cursor: pointer;
 		float: left;
 		font-size: 14px;
-		padding: 8px 0;
+		padding: 7px 10px;
+		position: relative;
 		text-align: center;
-		width: 100px;
+		min-width: 80px;
 		}
 		.page-tab .page-tab-menu {
-			background: #000;
-			border-radius: 5px 5px 0 0;
-			color: #FFFFFF;
+			border: 1px solid;
+			border-top: none;
+			border-radius: 0 0 5px 5px;
+			bottom: -25px;
 			display: none;
 			height: 20px;
-			padding: 0 2px;
+			left: -1px;
+			padding: 2px 0;
 			position: absolute;
-			top: -20px;
-			width: 96px;
+			right: -1px;
 			}
 		.page-tab .page-tab-menu span{
 			font-size: 9px;

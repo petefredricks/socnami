@@ -13,7 +13,7 @@ body {
 	}
 
 #socnami-header {
-	height: 40px;
+	height: 50px;
 	left: 0;
 	position: absolute;
 	right: 0;
@@ -23,24 +23,33 @@ body {
 	#socnami-header h1 {
 		font-family: Helvetica,Arial,Tahoma,sans-serif;
 		font-size: 24px;
-		padding: 8px 15px;
+		padding: 12px 15px;
 		}
 	#socnami-panel {
 		border-top: 1px solid;
-		height: 30px;
+		bottom: -28px;
+		height: 28px;
 		left: 0;
-		overflow: hidden;
 		position: absolute;
 		right: 0;
-		bottom: -30px;
+		z-index: 5;
+		}
+	#socnami-screen {
+		bottom: -38px;
+		height: 10px;
+		left: 0;
+		opacity: .7;
+		position: absolute;
+		right: 0;
+		z-index: 4;
 		}
 
 #socnami-wrapper {
-	bottom: 35px;
+	bottom: 0;
 	left: 0;
 	position: absolute;
 	right: 0;
-	top: 70px;
+	top: 78px;
 	z-index: 20;
 	}
 	#socnami-viewport {
