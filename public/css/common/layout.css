@@ -1,5 +1,9 @@
 body {
-	font-family: "Georgia";
+	font-family: 'Helvetica Neue',Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif;
+}
+
+h1 {
+	font-family: Georgia,serif;
 }
 
 /* SOCNAMI */
@@ -21,7 +25,6 @@ body {
 	z-index: 21;
 	}
 	#socnami-header h1 {
-		font-family: Helvetica,Arial,Tahoma,sans-serif;
 		font-size: 24px;
 		padding: 12px 15px;
 		}
@@ -35,8 +38,8 @@ body {
 		z-index: 5;
 		}
 	#socnami-screen {
-		bottom: -45px;
-		height: 15px;
+		bottom: -37px;
+		height: 7px;
 		left: 0;
 		opacity: 0.7;
 		position: absolute;
@@ -56,7 +59,7 @@ body {
 		bottom: 0;
 		left: 0;
 		overflow: auto;
-		padding: 15px 0;
+		padding: 7px 0;
 		position: absolute;
 		right: 0;
 		top: 0;

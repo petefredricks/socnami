@@ -24,8 +24,7 @@
 			this.elmts = {
 				'header':	$('#socnami-header'),
 				'wrapper':	$('#socnami-wrapper'),
-				'viewport': $('#socnami-viewport'),
-				'panel':	$('#socnami-panel')
+				'viewport': $('#socnami-viewport')
 			}
 			
 			this.menus.bind('add', this.drawMenu, this);
@@ -37,17 +36,13 @@
 			$(window).bind('beforeunload', $.proxy(this, 'syncToStorage'));
 		},
 		
-		events: {
-			'click #page-menu-add-page': 'createPage'
-		},
-		
 		getAnimation: function(speed) {
 			return this.settings.get('animate') ? speed : 0;
 		},
 		
 		render: function() {
 			
-			this.drawPageMenu();
+			this.renderPanel();
 			this.renderMenus();
 			this.renderPages();
 		},
@@ -142,18 +137,11 @@
 			this.elmts.viewport.html(vPage.render());
 		},
 		
-		drawPageMenu: function() {
-			this.elmts.panel.fillTemplate('page-menu');
+		renderPanel: function() {
+			
+			new View.App_Panel().render();
+			
 			this.elmts.pageMenu = $('#page-menu');
-		},
-		
-		createPage: function() {
-			
-			var name = prompt('New page:', 'New Page');
-			
-			if (name) {
-				this.pages.add({ name: name });
-			}
 		},
 		
 		addTab: function(mPage) {
@@ -255,3 +243,27 @@
 	win.router = router;
 	
 })(window, jQuery);
+
+View.App_Panel = Backbone.View.extend({
+	el: '#socnami-panel',
+		
+	events: {
+		'click #page-menu-add-page': 'createPage'
+	},
+	
+	render: function() {
+		
+		this.el.fillTemplate('socnami-panel');
+		
+		return this.el;
+	},
+		
+	createPage: function() {
+
+		var name = prompt('New page:', 'New Page');
+
+		if (name) {
+			APP.pages.add({ name: name });
+		}
+	}
+});

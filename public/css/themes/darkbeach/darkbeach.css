@@ -1,3 +1,5 @@
+.darkbeach { background-color: #202020; }
+
 .darkbeach #socnami-header { background-color: #202020; }
 .darkbeach #socnami-header h1 { color: #8EC1DA; }
 
@@ -11,8 +13,8 @@
 .darkbeach .app-menu-content,
 .darkbeach .app-menu-handle { background-color: #EBF4F6; color: #333; }
 
-.darkbeach .app-menu-content .list-item { background-color: #B7DEE6; }
-.darkbeach .open .app-menu-content .list-item:hover { background-color: #FFC87C; }
+.darkbeach .app-menu-content .list-item { background-color: #C5E0CB; }
+.darkbeach .open .app-menu-content .list-item:hover { background-color: #BDFF7C; }
 	
 .darkbeach #page-menu,
 .darkbeach #page-menu .page-tab,
