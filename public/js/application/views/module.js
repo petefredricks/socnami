@@ -5,8 +5,6 @@ View.Module = Backbone.View.extend({
 	initialize: function() {
 		
 		this.data = this.model.toJSON();
-		this.data.title = APP.definitions.modules[this.data.type].title;
-		
 		this.model.bind('destroy', this.remove, this);
 	},
 	
@@ -21,10 +19,30 @@ View.Module = Backbone.View.extend({
 	},
 	
 	render: function() {
-		this.el
-			.fillTemplate('module', this.data)
-			.data('cid', this.model.cid);
-			
+		
+		var view;
+		var data = {
+			parent: this
+		}
+		
+		switch (this.data.type) {
+			case 'twitter':
+				view = new View.Twitter(data);
+				break;
+			default:
+				view = new View.Empty(data);
+				break;
+		}
+		
+		if (view) {
+			this.el
+				.data('cid', this.model.cid)
+				.fillTemplate('module', {
+					title: APP.definitions.modules[this.data.type].title
+				})
+				.append(view.render());
+		}
+
 		return this.el;
 	},
 	
@@ -37,5 +55,32 @@ View.Module = Backbone.View.extend({
 				'left': left
 			});
 		}
+	}
+});
+
+View.Module_Content = Backbone.View.extend({
+	className: 'module-body'
+});
+
+View.Twitter = View.Module_Content.extend({
+	
+	events: {
+		'click': 'login'
+	},
+	
+	render: function() {
+		return this.el.fillTemplate('module-twitter')
+	},
+	
+	login: function() {
+		console.log(1)
+		window.location = '/auth/login/twitter'
+	}
+});
+
+View.Empty = View.Module_Content.extend({
+	
+	render: function() {
+		return this.el.fillTemplate('module-empty')
 	}
 });

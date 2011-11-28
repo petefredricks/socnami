@@ -5,12 +5,14 @@
 var mongoose = require('mongoose');
 var express = require('express');
 var mongoStore = require('connect-mongodb');
-var json = require('./helpers/json.js');
+var auth = require('connect-auth');
+var url = require('url');
+var keys = require('./keys.js');
 
 // Models
 require('./models/user.js');
 
-var app = module.exports = express.createServer()
+var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
 
 /********************
@@ -29,7 +31,6 @@ app.configure('production', function(){
 
 // MongoDB stores
 var db = mongoose.connect('mongodb://localhost/socnami');
-var User = mongoose.model('User');
 
 app.configure(function() {
 	app.set('views', __dirname + '/views');
@@ -43,6 +44,13 @@ app.configure(function() {
 		secret: 'flempeterson',
 		store: new mongoStore({db: db.connections[0].db})
 	}));
+	
+	app.use(auth([
+		auth.Twitter({
+			consumerKey: keys.twitter.key, 
+			consumerSecret: keys.twitter.secret
+		})
+	]));
 	app.use(express.methodOverride());
 	app.use(app.router);
 	app.use(express.static(__dirname + '/public'));
@@ -51,6 +59,9 @@ app.configure(function() {
 /********************
 	Routes
  ********************/
+require('./controllers/login.js');
+require('./controllers/auth.js');
+
 app.get('/pong', function(req, res){
 	res.render('pong/pong', {
 		title: 'Socnami Pong'
@@ -69,65 +80,8 @@ app.get('/', function(req, res) {
 	});
 });
 
-app.get('/login', function(req, res) {
-	
-	if (req.session.user) {
-		res.redirect('/');
-		return;
-	}
-	
-	res.render('index', {
-		title: 'Socnami'
-	});
-});
-
-app.post('/login', function(req, res) {
-	
-	User.find({
-		email: req.body.username
-	}, function(err, users) {
-		
-		if (err) {
-			res.send(json.make(err, 'error'));
-		}
-		
-		var success = false;
-		
-		users.forEach(function(user) {
-			
-			if (!success && user && user.authenticate(req.body.password)) {
-			
-				req.session.user = user.id;
-
-				// Remember me
-				if (req.body.remember_me) {
-
-					var loginToken = new LoginToken({
-						email: user.email
-					});
-
-					loginToken.save(function() {
-						res.cookie('logintoken', loginToken.cookieValue, {
-							expires: new Date(Date.now() + 2 * 604800000), 
-							path: '/'
-						});
-					});
-				}
-
-				res.send(json.make(req.sessionID));
-				
-				success = true;
-			}
-		});
-		
-		if (!success) {
-			res.send(json.make('Invalid', 'error'));
-		}
-	});
-});
-
 app.post('/save', function(req, res) {
-	console.log(req.body)
+//	console.log(req.body)
 });
 
 app.listen(80);
