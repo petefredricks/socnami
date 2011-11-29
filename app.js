@@ -70,6 +70,9 @@ app.get('/pong', function(req, res){
 
 app.get('/', function(req, res) {
 	
+	console.log(req.getAuthDetails())
+	console.log(req.isAuthenticated())
+	
 	if (!req.session.user) {
 		res.redirect('/login');
 		return;
@@ -82,6 +85,7 @@ app.get('/', function(req, res) {
 
 app.post('/save', function(req, res) {
 //	console.log(req.body)
+	res.end();
 });
 
 app.listen(80);
@@ -89,6 +93,8 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 
 io.sockets.on('connection', function (socket) {
 	socket.on('auth', function(sid) {
+		var session = app.session
+		console.log(sid);
 	});
 });
 

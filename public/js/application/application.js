@@ -1,6 +1,8 @@
 (function(win, $) {
 
-//	var socket = io.connect();
+	var socket = io.connect();
+	var socketId = null;
+	
 	var App = Backbone.View.extend({
 
 		el: 'body',
@@ -168,7 +170,7 @@
 				settings: this.settings.toJSON()
 			}
 			
-			$.post('/save', data);
+//			$.post('/save', data);
 		}
 	});
 	
@@ -185,6 +187,8 @@
 				win.APP.render();
 			}
 		});
+		console.log(socketId)
+		socket.emit('auth', socketId);
 	}
 	
 	function doAuth() {
@@ -199,6 +203,7 @@
 			if (data && data.status) {
 				router.navigate('', true);
 				form.off('submit');
+				socketId = data.data;
 			}
 			else {
 				form.toggleClass('error loading');

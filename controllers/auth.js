@@ -5,7 +5,7 @@ var authPaths = {
 	accessDenied: "/auth/accessdenied",
 	login: "/auth/login/:type", 
 	logout: "/auth/logout/:type",
-	callback: "/auth/callback"
+	callback: "/auth/callback/:type"
 };
 
 var authCheck = function(req, res, next) {
@@ -13,13 +13,10 @@ var authCheck = function(req, res, next) {
 	var type = req.params.type;
 
 	if (type) {
-
 		req.authenticate([type], function(error, authenticated) {
-			if ( authenticated === true ) {
+			
+			if (authenticated !== undefined) {
 				next();
-			} 
-			else {
-				res.redirect( authPaths.loginFailure );
 			}
 		});
 	}
