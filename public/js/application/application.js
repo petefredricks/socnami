@@ -187,7 +187,7 @@
 				win.APP.render();
 			}
 		});
-		console.log(socketId)
+		
 		socket.emit('auth', socketId);
 	}
 	
@@ -203,7 +203,7 @@
 			if (data && data.status) {
 				router.navigate('', true);
 				form.off('submit');
-				socketId = data.data;
+				$.cookie('sid', data.data);
 			}
 			else {
 				form.toggleClass('error loading');

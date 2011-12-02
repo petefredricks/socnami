@@ -1,4 +1,3 @@
-
 /********************
 	Dependencies
  ********************/
@@ -8,6 +7,7 @@ var mongoStore = require('connect-mongodb');
 var auth = require('connect-auth');
 var url = require('url');
 var keys = require('./keys.js');
+var assetManage = require('./helpers/asset-manager');
 
 // Models
 require('./models/user.js');
@@ -38,13 +38,10 @@ app.configure(function() {
 	app.use(express.bodyParser());
 	app.use(express.cookieParser());
 	app.use(express.session({
-		cookie: {
-			maxAge: 60000 * 30
-		},
+		cookie: { maxAge: false },
 		secret: 'flempeterson',
 		store: new mongoStore({db: db.connections[0].db})
 	}));
-	
 	app.use(auth([
 		auth.Twitter({
 			consumerKey: keys.twitter.key, 
@@ -52,8 +49,9 @@ app.configure(function() {
 		})
 	]));
 	app.use(express.methodOverride());
+	app.use(assetManage);
 	app.use(app.router);
-	app.use(express.static(__dirname + '/public'));
+	app.use(express.static(__dirname + '/public', { maxLife: 30 }));
 });
 
 /********************
@@ -62,16 +60,13 @@ app.configure(function() {
 require('./controllers/login.js');
 require('./controllers/auth.js');
 
-app.get('/pong', function(req, res){
-	res.render('pong/pong', {
-		title: 'Socnami Pong'
-	});
-});
+//app.get('/pong', function(req, res){
+//	res.render('pong/pong', {
+//		title: 'Socnami Pong'
+//	});
+//});
 
 app.get('/', function(req, res) {
-	
-	console.log(req.getAuthDetails())
-	console.log(req.isAuthenticated())
 	
 	if (!req.session.user) {
 		res.redirect('/login');
@@ -84,7 +79,6 @@ app.get('/', function(req, res) {
 });
 
 app.post('/save', function(req, res) {
-//	console.log(req.body)
 	res.end();
 });
 
