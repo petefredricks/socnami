@@ -1,14 +1,6 @@
 var app = module.parent.exports;
 
-var authPaths = {
-	loginFailure: "/auth/loginfailed", 
-	accessDenied: "/auth/accessdenied",
-	login: "/auth/login/:type", 
-	logout: "/auth/logout/:type",
-	callback: "/auth/callback/:type"
-};
-
-var authCheck = function(req, res, next) {
+var indexConfig = function(req, res, next) {
 
 	var type = req.params.type;
 

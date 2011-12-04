@@ -37,6 +37,7 @@ app.configure('development', function() {
 
 app.configure('production', function(){
 	app.use(express.errorHandler()); 
+	app.use(assetManager.middleware);
 });
 
 app.configure(function() {
@@ -44,46 +45,37 @@ app.configure(function() {
 	app.set('view engine', 'jade');
 	app.use(express.bodyParser());
 	app.use(express.cookieParser());
+	
 	app.use(express.session({
-		cookie: {maxAge: false},
+		cookie: { maxAge: false },
 		secret: 'flempeterson',
-		store: new mongoStore({db: db.connections[0].db})
+		store: new mongoStore({ db: db.connections[0].db })
 	}));
+	
 	app.use(auth([
 		auth.Twitter({
 			consumerKey: keys.twitter.key, 
 			consumerSecret: keys.twitter.secret
 		})
 	]));
+	
 	app.use(express.methodOverride());
 	app.use(stylus.middleware({ 
 		src: __dirname + '/styles',
 		dest: __dirname + '/public',
 		compress: true,
-		debug: true,
 		compile: compile
 	}));
-//	app.use(assetManager.middleware);
+	
 	app.use(app.router);
 	app.use(express.static(__dirname + '/public', { maxAge: 30000 }));
 });
-
-console.log(auth.Twitter({
-			consumerKey: keys.twitter.key, 
-			consumerSecret: keys.twitter.secret
-		}))
 
 /********************
 	Routes
  ********************/
 require('./controllers/login.js');
 require('./controllers/auth.js');
-
-//app.get('/pong', function(req, res){
-//	res.render('pong/pong', {
-//		title: 'Socnami Pong'
-//	});
-//});
 
 app.get('/', function(req, res) {
 	
@@ -122,8 +114,7 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 
 io.sockets.on('connection', function (socket) {
 	socket.on('auth', function(sid) {
-		var session = app.session
-		console.log(sid);
+		var session = app.session;
 	});
 });
 
