@@ -57,13 +57,13 @@ app.configure(function() {
 	]));
 	app.use(express.methodOverride());
 	app.use(stylus.middleware({ 
-		src: __dirname + '/public',
-		dest: __dirname + '/public/css',
+		src: __dirname + '/styles',
+		dest: __dirname + '/public',
 		compress: true,
 		debug: true,
 		compile: compile
 	}));
-	app.use(assetManager.middleware);
+//	app.use(assetManager.middleware);
 	app.use(app.router);
 	app.use(express.static(__dirname + '/public', { maxAge: 30000 }));
 });

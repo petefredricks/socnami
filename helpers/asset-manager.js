@@ -56,7 +56,7 @@ var assetManagerGroups = {
 };
 
 module.exports = {
-	middleware: assetManager(assetManagerGroups),
+//	middleware: assetManager(assetManagerGroups),
 	cssFiles: cssFiles,
 	jsFiles: jsFiles
 }
