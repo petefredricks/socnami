@@ -13,18 +13,6 @@ app.get('/logout',function(req, res){
 		res.redirect('/login');
 });
 
-app.get('/login', function(req, res) {
-
-	if (req.session.user) {
-		res.redirect('/');
-		return;
-	}
-
-	res.render('index', {
-		title: 'Socnami'
-	});
-});
-
 app.post('/login', function(req, res) {
 
 	User.find({

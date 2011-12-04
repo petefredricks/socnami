@@ -99,6 +99,20 @@ app.get('/', function(req, res) {
 	});
 });
 
+app.get('/login', function(req, res) {
+
+	if (req.session.user) {
+		res.redirect('/');
+		return;
+	}
+	
+	res.render('index', {
+		env: app.settings.env,
+		cssFiles: assetManager.cssFiles,
+		jsFiles: assetManager.jsFiles
+	});
+});
+
 app.post('/save', function(req, res) {
 	res.end();
 });
