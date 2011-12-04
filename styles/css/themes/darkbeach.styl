@@ -1,0 +1,84 @@
+@import 'nib'
+
+bgcolor = #7DC5D4
+bgcolor-light = #EBF4F6
+bgcolor-frame = #202020
+border = #444444
+highlight = #FFC87C
+warning = #FF6060
+logo = #8EC1DA
+
+.darkbeach
+	background-color bgcolor-frame
+	
+	#socnami-header h1
+		color logo
+
+	#socnami-panel
+		background linear-gradient(top, lighten(bgcolor-frame, 10%), bgcolor-frame)
+		border-color border
+
+	#socnami-wrapper
+		background linear-gradient(top, bgcolor, bgcolor-light 90%, highlight 150%)
+		border-color #434346
+		
+	#socnami-screen
+		background-color bgcolor
+
+	.app-menu
+		
+		.app-menu-content,
+		.app-menu-handle 
+			background-color: bgcolor-light
+			color bgcolor-frame
+
+		.app-menu-content .list-item
+			background-color lighten(bgcolor, 50%)
+	
+	.app-menu.open
+		
+		.app-menu-content .list-item
+			&:hover
+				background-color lighten(bgcolor, 20%)
+		
+	#page-menu,
+	#page-menu .page-tab,
+	.module-body
+		border-color border
+		color: bgcolor-light
+
+	.module-body
+		background-color bgcolor-frame 
+
+	#page-menu .page-tab.active
+		background linear-gradient(bottom, bgcolor-light, darken(bgcolor-light, 10%))
+		color bgcolor-frame
+
+	#page-menu-add-page
+		background bgcolor-frame
+		border-color border 
+		color bgcolor
+		&:hover
+			color bgcolor-light
+
+	.page-tab-menu
+		background bgcolor-frame
+		border-color border
+		color bgcolor-light
+
+		span.page-rename
+			&:hover
+				color highlight
+
+		span.page-delete
+			&:hover
+				color warning
+
+	.module-close
+		&:hover
+			color warning
+
+	.ui-sortable-placeholder
+		background bgcolor-light 
+		border 1px dashed black
+		opacity .5
