@@ -1,8 +1,15 @@
 !!!
 html
 	head
-		title= title
-		link(rel='stylesheet', href='static/css/2/style.css')
+
+	if env == 'development'
+		each css in cssFiles
+			link(rel='stylesheet', href='styles/#{css}')
+
 	body!= body
-	script(src="/socket.io/socket.io.js")
-	script(src="static/js/2/script.js")
+		script(src="/socket.io/socket.io.js")
+	
+	if env == 'development'
+		each script in jsFiles
+			script(src="js/#{script}")
+		

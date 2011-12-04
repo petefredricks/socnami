@@ -5,12 +5,22 @@ var mongoose = require('mongoose');
 var express = require('express');
 var mongoStore = require('connect-mongodb');
 var auth = require('connect-auth');
-var url = require('url');
 var keys = require('./keys.js');
-var assetManage = require('./helpers/asset-manager');
+var assetManager = require('./helpers/asset-manager');
+var stylus = require('stylus');
+var nib = require('nib');
+
+function compile(str, path) {
+	return stylus(str)
+		.set('filename', path)
+		.use(nib());
+}
 
 // Models
 require('./models/user.js');
+
+// MongoDB stores
+var db = mongoose.connect('mongodb://localhost/socnami');
 
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
@@ -29,16 +39,13 @@ app.configure('production', function(){
 	app.use(express.errorHandler()); 
 });
 
-// MongoDB stores
-var db = mongoose.connect('mongodb://localhost/socnami');
-
 app.configure(function() {
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.bodyParser());
 	app.use(express.cookieParser());
 	app.use(express.session({
-		cookie: { maxAge: false },
+		cookie: {maxAge: false},
 		secret: 'flempeterson',
 		store: new mongoStore({db: db.connections[0].db})
 	}));
@@ -49,10 +56,22 @@ app.configure(function() {
 		})
 	]));
 	app.use(express.methodOverride());
-	app.use(assetManage);
+	app.use(stylus.middleware({ 
+		src: __dirname + '/public',
+		dest: __dirname + '/public/css',
+		compress: true,
+		debug: true,
+		compile: compile
+	}));
+	app.use(assetManager.middleware);
 	app.use(app.router);
-	app.use(express.static(__dirname + '/public', { maxLife: 30 }));
+	app.use(express.static(__dirname + '/public', { maxAge: 30000 }));
 });
+
+console.log(auth.Twitter({
+			consumerKey: keys.twitter.key, 
+			consumerSecret: keys.twitter.secret
+		}))
 
 /********************
 	Routes
@@ -74,7 +93,9 @@ app.get('/', function(req, res) {
 	}
 	
 	res.render('index', {
-		title: 'Socnami'
+		env: app.settings.env,
+		cssFiles: assetManager.cssFiles,
+		jsFiles: assetManager.jsFiles
 	});
 });
 

@@ -73,8 +73,7 @@ View.Twitter = View.Module_Content.extend({
 	},
 	
 	login: function() {
-		console.log(1)
-		window.location = '/auth/login/twitter'
+		window.location = '/auth/login/twitter';
 	}
 });
 

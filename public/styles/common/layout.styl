@@ -1,0 +1,122 @@
+@import 'nib'
+
+body 
+	font-family 'Helvetica Neue',Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif
+h1 
+	font-family Georgia,serif
+
+/* SOCNAMI */
+#socnami 
+	absolute left right
+	bottom 0
+	overflow hidden
+	top 0
+
+#socnami-header
+	absolute left right
+	height 50px
+	top 0
+	z-index 21
+
+#socnami-header h1
+	font-size 24px
+	padding 12px 15px
+
+#socnami-panel {
+	border-bottom: 1px solid #202020;
+	border-top: 1px solid;
+	bottom: -30px;
+	left: 0;
+	position: absolute;
+	right: 0;
+	z-index: 5;
+}
+#socnami-screen {
+	bottom: -37px;
+	height: 7px;
+	left: 0;
+	opacity: 0.7;
+	position: absolute;
+	right: 0;
+	z-index: 4;
+}
+
+#socnami-wrapper {
+	bottom: 0;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 80px;
+	z-index: 20;
+}
+#socnami-viewport {
+	bottom: 0;
+	left: 0;
+	overflow: auto;
+	padding: 7px 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+#socnami-cover {
+	background: #000;
+	bottom: 0;
+	display: none;
+	left: 0;
+	opacity: .8;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 100;
+}
+#socnami-cover h1 {
+	color: #FFFFFF;
+	font-size: 30px;
+	margin: auto;
+	padding: 100px 0 10px;
+	width: 340px;
+}
+
+#login {
+	background: none repeat scroll 0 0 #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+	color: #333;
+    margin: 0 auto;
+    padding: 20px;
+    width: 300px;
+}
+#login .login-input {
+	padding: 10px 0;
+}
+#login .login-input input{
+	float: right;
+	font-size: 14px;
+	height: 17px;
+	margin-top: -10px;
+	padding: 3px;
+	width: 200px;
+}
+#login.loading .login-input,
+#login.loading #login-submit,
+#login .msg-loading,
+#login .msg-error {
+	display: none;
+}
+#login .msg-error {
+	color: #aa0000;
+}
+#login.loading .msg-loading,
+#login.error .msg-error {
+	display: block;
+	font-size: 13px;
+	padding: 0px 3px 10px;
+	text-align: center;
+}
+#login-submit {
+	float: right;
+	margin-top: 10px;
+}
+#login h2 {
+	padding: 10px 0 20px 0;
+}
